@@ -163,65 +163,7 @@ public class MainActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    public class Pum {
-        public Pum() {
 
-        }
-
-        private String sum;
-
-        public String getSum() {
-            return sum;
-        }
-
-        private String total;
-
-        public String getTotal() {
-            return total;
-        }
-
-        private String remain;
-
-        public String getRemain() {
-            return remain;
-        }
-
-        private String drug;
-
-        public String getDrug() {
-            return drug;
-        }
-
-        private String lastTime;
-
-        public String getLastTime() {
-            return lastTime;
-        }
-
-        private String sn;
-
-        public String getSn() {
-            return sn;
-        }
-
-        private int slot;
-
-        public int getSlot() {
-            return slot;
-        }
-
-        private String speed;
-
-        public String getSpeed() {
-            return speed;
-        }
-
-        private String realSpeed;
-
-        public String getRealSpeed() {
-            return realSpeed;
-        }
-    }
 
 }
 

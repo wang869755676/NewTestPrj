@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/item_info_sn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:padding="10dp"
         android:text="1号泵"
         android:textColor="@android:color/black"
         android:textSize="18sp"
@@ -18,26 +17,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp">
+        android:layout_marginTop="3dp"
+        android:orientation="horizontal">
 
         <TextView
-            android:lines="1"
-            android:ellipsize="end"
+            android:id="@+id/item_info_serNum"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_weight="1"
-            android:text="设备类型:" />
+            android:ellipsize="end"
+            android:text="设备序列号:" />
 
         <TextView
-            android:lines="1"
-            android:ellipsize="end"
+
+            android:id="@+id/item_info_realSpeed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_weight="1"
-            android:text="设备序列号:"
-            android:id="@+id/textView2" />
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="实时流速:" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,41 +47,23 @@
         android:layout_marginTop="3dp">
 
         <TextView
-            android:lines="1"
+            android:id="@+id/item_info_speed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
             android:ellipsize="end"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_weight="1"
-            android:text="型号:" />
-
-        <TextView
             android:lines="1"
+            android:text="流速:" />
+
+        <TextView
+            android:id="@+id/item_info_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
             android:ellipsize="end"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_weight="1"
-            android:text="连接状态:" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_weight="1"
-            android:text="总量:" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_weight="1"
+            android:lines="1"
             android:text="药名:" />
     </LinearLayout>
 
@@ -90,21 +73,38 @@
         android:layout_marginTop="3dp">
 
         <TextView
-            android:lines="1"
-            android:ellipsize="end"
+            android:id="@+id/item_info_surplus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_weight="1"
-            android:text="设备流速:" />
+            android:text="剩余量：" />
 
         <TextView
-            android:lines="1"
-            android:ellipsize="end"
+            android:id="@+id/item_info_total"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_weight="1"
-            android:text="实时流速:" />
+            android:text="总量：" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp">
+
+        <TextView
+            android:id="@+id/item_info_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="剩余时间：" />
+
+
+    </LinearLayout>
+
 </LinearLayout>
