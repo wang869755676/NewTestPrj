@@ -1,13 +1,35 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.station.nurse.newtestprj.ui.fragment.SpeedFragment">
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="流速走势" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="20dp">
 
-</FrameLayout>
+        <LinearLayout
+            android:id="@+id/speed_one"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <CheckBox
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="1号泵" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/speed_line"
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
+
+    </com.github.mikephil.charting.charts.LineChart>
+
+</LinearLayout>
