@@ -1,7 +1,6 @@
 package com.station.nurse.newtestprj.ui.fragment;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,14 +21,16 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.station.nurse.newtestprj.R;
 import com.station.nurse.newtestprj.formatter.DayAxisValueFormatter;
 import com.station.nurse.newtestprj.utils.FormateDate;
+import com.station.nurse.newtestprj.view.SuitLines;
+import com.station.nurse.newtestprj.view.Unit;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,13 +42,17 @@ public class SpeedFragment extends Fragment {
     LinearLayout speedOne;
     @Bind(R.id.speed_line)
     LineChart speedLine;
-    private int Colors[] = new int[]{R.color.one, R.color.two, R.color.three, R.color.three, R.color.four, R.color.five};
+    @Bind(R.id.suitlines)
+    SuitLines suitlines;
+    SuitLines.LineBuilder builder;
 
+
+    private int Colors[] = new int[]{R.color.one, R.color.two, R.color.three, R.color.three, R.color.four, R.color.five};
     private ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
     private LineData data;
     private List<List<Entry>> values;
     private List<Entry> value;
-    private List<String> days=new ArrayList<>();
+    private List<String> days = new ArrayList<>();
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -77,7 +82,7 @@ public class SpeedFragment extends Fragment {
      */
     private void initChart() {
 
-        speedLine.getDescription().setEnabled(false);
+    /*    speedLine.getDescription().setEnabled(false);
         speedLine.setDrawGridBackground(true);
 
         XAxis xAxis = speedLine.getXAxis();
@@ -98,11 +103,13 @@ public class SpeedFragment extends Fragment {
         speedLine.setScrollContainer(true);
         speedLine.setTouchEnabled(true);
         speedLine.setPinchZoom(false);
-       // speedLine.zoom(1.2f, 0f, 15f, 0f);
+        // speedLine.zoom(1.2f, 0f, 15f, 0f);*/
+
+        builder = new SuitLines.LineBuilder();
     }
 
     private void initData() {
-        Log.e("===",System.currentTimeMillis()+"");
+      /*  Log.e("===", System.currentTimeMillis() + "");
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
 
         for (int z = 0; z < 1; z++) {
@@ -110,7 +117,7 @@ public class SpeedFragment extends Fragment {
             ArrayList<Entry> values = new ArrayList<Entry>();
 
             for (int i = 0; i < 20; i++) {
-                days.add(FormateDate.formateDate("MM-dd HH:mm",System.currentTimeMillis()+20));
+                days.add(FormateDate.formateDate("MM-dd HH:mm", System.currentTimeMillis() + 20));
                 double val = (Math.random() * 20) + 3;
                 values.add(new Entry(i, (float) val));
             }
@@ -126,10 +133,9 @@ public class SpeedFragment extends Fragment {
         }
 
 
-
         LineData data = new LineData(dataSets);
         speedLine.setData(data);
-       speedLine.invalidate();
+        speedLine.invalidate();*/
 
        /*  values = new ArrayList<>();
         values.add(new ArrayList<Entry>());
@@ -178,6 +184,15 @@ public class SpeedFragment extends Fragment {
         ((LineDataSet) dataSets.get(0)).setColors(ColorTemplate.VORDIPLOM_COLORS);
         ((LineDataSet) dataSets.get(0)).setCircleColors(ColorTemplate.VORDIPLOM_COLORS);*/
 
+        for (int i = 0; i < 6; i++) {
+
+            List<Unit> lines = new ArrayList<>();
+            for (int j = 0; j < 50; j++) {
+                lines.add(new Unit(new SecureRandom().nextInt(128), "" + i));
+            }
+            builder.add(lines, Colors[i]);
+            builder.build(suitlines, true);
+        }
 
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tech.linjiang.suitlines;
+package com.station.nurse.newtestprj.view;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
@@ -43,6 +43,8 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EdgeEffect;
 import android.widget.Scroller;
+
+import com.station.nurse.newtestprj.R;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

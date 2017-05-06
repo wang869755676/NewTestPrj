@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tech.linjiang.suitlines;
+package com.station.nurse.newtestprj.view;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
