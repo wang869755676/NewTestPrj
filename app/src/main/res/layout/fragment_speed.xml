@@ -4,40 +4,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="20dp">
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+      <LinearLayout
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/speed_one"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
+          <com.github.mikephil.charting.charts.LineChart
+              android:id="@+id/speed_line"
+              android:layout_width="match_parent"
+              android:layout_height="200dp">
 
-            <CheckBox
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="1号泵" />
+          </com.github.mikephil.charting.charts.LineChart>
 
-        </LinearLayout>
-    </HorizontalScrollView>
+          <tech.linjiang.suitlines.SuitLines
+              android:id="@+id/suitlines"
+              android:layout_width="match_parent"
+              android:layout_height="200dp"
+              android:background="#dfdede"
+              app:lineType="segment" />
+          <lecho.lib.hellocharts.view.LineChartView
+              android:id="@+id/chart"
+              android:layout_width="match_parent"
+              android:layout_height="200dp" />
 
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/speed_line"
-        android:layout_width="match_parent"
-        android:layout_height="250dp">
+      </LinearLayout>
 
-    </com.github.mikephil.charting.charts.LineChart>
 
-    <tech.linjiang.suitlines.SuitLines
-        xmlns:line="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/suitlines"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="#dfdede"
-        line:lineType="curve" />
+  </ScrollView>
 
 </LinearLayout>

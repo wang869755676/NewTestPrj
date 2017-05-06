@@ -1,6 +1,7 @@
 package com.station.nurse.newtestprj.ui.fragment;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,8 +22,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.station.nurse.newtestprj.R;
 import com.station.nurse.newtestprj.formatter.DayAxisValueFormatter;
 import com.station.nurse.newtestprj.utils.FormateDate;
-import com.station.nurse.newtestprj.view.SuitLines;
-import com.station.nurse.newtestprj.view.Unit;
+
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -30,6 +30,8 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import tech.linjiang.suitlines.SuitLines;
+import tech.linjiang.suitlines.Unit;
 
 
 /**
@@ -38,16 +40,15 @@ import butterknife.ButterKnife;
 public class SpeedFragment extends Fragment {
 
 
-    @Bind(R.id.speed_one)
-    LinearLayout speedOne;
+    /* @Bind(R.id.speed_one)
+     LinearLayout speedOne;*/
     @Bind(R.id.speed_line)
     LineChart speedLine;
     @Bind(R.id.suitlines)
     SuitLines suitlines;
     SuitLines.LineBuilder builder;
 
-
-    private int Colors[] = new int[]{R.color.one, R.color.two, R.color.three, R.color.three, R.color.four, R.color.five};
+    private int[] color = {Color.RED, 0xFF5E2612, 0xFFE3CF57, 0xFFED9121, 0xFFD2691E, 0xFF734A12};
     private ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
     private LineData data;
     private List<List<Entry>> values;
@@ -184,15 +185,31 @@ public class SpeedFragment extends Fragment {
         ((LineDataSet) dataSets.get(0)).setColors(ColorTemplate.VORDIPLOM_COLORS);
         ((LineDataSet) dataSets.get(0)).setCircleColors(ColorTemplate.VORDIPLOM_COLORS);*/
 
-        for (int i = 0; i < 6; i++) {
+        init(6);
+    }
 
-            List<Unit> lines = new ArrayList<>();
-            for (int j = 0; j < 50; j++) {
-                lines.add(new Unit(new SecureRandom().nextInt(128), "" + i));
-            }
-            builder.add(lines, Colors[i]);
-            builder.build(suitlines, true);
+    public void init(int count) {
+        if (count <= 0) {
+            count = 0;
         }
+        if (count == 1) {
+            List<Unit> lines = new ArrayList<>();
+            for (int i = 0; i < 14; i++) {
+                lines.add(new Unit(new SecureRandom().nextInt(48), i + "d"));
+            }
+            suitlines.feedWithAnim(lines);
+            return;
+        }
+
+        SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
+        for (int j = 0; j < count; j++) {
+            List<Unit> lines = new ArrayList<>();
+            for (int i = 0; i < 50; i++) {
+                lines.add(new Unit(new SecureRandom().nextInt(128), FormateDate.formateDate("MM-dd HH:ss",System.currentTimeMillis())));
+            }
+            builder.add(lines,color[j]);
+        }
+        builder.build(suitlines, true);
 
     }
 
