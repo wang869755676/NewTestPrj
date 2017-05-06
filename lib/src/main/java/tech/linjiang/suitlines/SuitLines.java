@@ -1300,8 +1300,7 @@ public class SuitLines extends View {
             final List<Paint> tmpPaints = new ArrayList<>();
             for (int i = 0; i < colors.size(); i++) {
                 Paint paint = suitLines.buildNewPaint();
-                paint.setColor(colors.get(0)[0]);
-               // paint.setShader(suitLines.buildPaintColor(colors.get(i)));
+                paint.setColor(colors.get(i)[0]);
                 tmpPaints.add(i, paint);
             }
             suitLines.postAction(new Runnable() {
