@@ -11,5 +11,4 @@
     android:paddingTop="10dp"
     android:singleLine="true"
     android:textSize="15sp"
-    tools:textColor="@android:color/black"
-    tools:text="Item"/>
+    android:textColor="@android:color/black" />

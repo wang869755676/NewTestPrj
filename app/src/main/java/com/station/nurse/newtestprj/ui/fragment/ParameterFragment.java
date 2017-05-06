@@ -47,6 +47,7 @@ public class ParameterFragment extends Fragment {
         nums.add("4号泵");
         nums.add("5号泵");
         nums.add("6号泵");
+        paramNum.attachDataSource(nums);
     }
 
     @Override

@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -9,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
 
         <TextView
@@ -18,9 +20,11 @@
 
 
         <com.station.nurse.newtestprj.view.NiceSpinner
+            app:textTint="@color/black"
+            app:backgroundSelector="@drawable/arc_bg"
             android:id="@+id/param_num"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content" />
+            android:layout_width="120dp"
+            android:layout_height="30dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -35,9 +39,10 @@
             android:text="总量：" />
 
         <EditText
+            android:inputType="number"
             android:id="@+id/param_total"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
             android:background="@drawable/arc_bg" />
 
         <TextView
@@ -59,9 +64,10 @@
             android:text="流速：" />
 
         <EditText
+            android:inputType="numberDecimal"
             android:id="@+id/param_speed"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
             android:background="@drawable/arc_bg" />
 
         <TextView
