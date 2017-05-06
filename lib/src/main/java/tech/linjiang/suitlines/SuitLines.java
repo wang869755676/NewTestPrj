@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.station.nurse.newtestprj.view;
+package tech.linjiang.suitlines;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
@@ -43,8 +43,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EdgeEffect;
 import android.widget.Scroller;
-
-import com.station.nurse.newtestprj.R;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -1303,7 +1301,7 @@ public class SuitLines extends View {
             for (int i = 0; i < colors.size(); i++) {
                 Paint paint = suitLines.buildNewPaint();
                 paint.setColor(colors.get(0)[0]);
-                paint.setShader(suitLines.buildPaintColor(colors.get(i)));
+               // paint.setShader(suitLines.buildPaintColor(colors.get(i)));
                 tmpPaints.add(i, paint);
             }
             suitLines.postAction(new Runnable() {
