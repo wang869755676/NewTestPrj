@@ -45,8 +45,8 @@ public class SpeedFragment extends Fragment {
     GridView speedGv;
 
     private List<SpeedModel> speedModels;
-    private List<SpeedModel> datas;
-    private int currentPosition=-1;
+    private int currentPosition = -1;
+    private boolean[] removeNum;
     private boolean isRemove = false;
 
    /* private ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
@@ -84,8 +84,8 @@ public class SpeedFragment extends Fragment {
 
         speedModels = new ArrayList<>();
         speedModels.add(new SpeedModel());
-       // speedModels.add(new SpeedModel());
-        datas = speedModels;
+        speedModels.add(new SpeedModel());
+        removeNum = new boolean[speedModels.size()];
         speedGv.setAdapter(new NumAdapter());
         init();
     }
@@ -97,10 +97,10 @@ public class SpeedFragment extends Fragment {
         builder = new SuitLines.LineBuilder();
 
         for (int j = 0; j < speedModels.size(); j++) {
-            if (currentPosition == j && isRemove) {
+            if (removeNum[j]) {
                 continue;
             }
-            lines=new ArrayList<>();
+            lines = new ArrayList<>();
             for (int i = 0; i < 50; i++) {
                 lines.add(new Unit(new SecureRandom().nextInt(128), FormateDate.formateDate("MM-dd HH:ss", System.currentTimeMillis())));
             }
@@ -150,11 +150,10 @@ public class SpeedFragment extends Fragment {
     }
 
     private void hideView(int position, boolean isChecked) {
-        currentPosition = position;
         if (!isChecked) {
-            isRemove = true;
+            removeNum[position]=true;
         } else {
-            isRemove = false;
+            removeNum[position]=false;
         }
         init();
     }
