@@ -4,36 +4,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-      <LinearLayout
-          android:orientation="vertical"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+    <GridView
+        android:id="@+id/speed_gv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></GridView>
 
-          <com.github.mikephil.charting.charts.LineChart
-              android:id="@+id/speed_line"
-              android:layout_width="match_parent"
-              android:layout_height="200dp">
+    <tech.linjiang.suitlines.SuitLines
+        android:id="@+id/suitlines"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#dfdede"
+        app:lineType="segment" />
 
-          </com.github.mikephil.charting.charts.LineChart>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-          <tech.linjiang.suitlines.SuitLines
-              android:id="@+id/suitlines"
-              android:layout_width="match_parent"
-              android:layout_height="200dp"
-              android:background="#dfdede"
-              app:lineType="segment" />
-          <lecho.lib.hellocharts.view.LineChartView
-              android:id="@+id/chart"
-              android:layout_width="match_parent"
-              android:layout_height="200dp" />
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/speed_line"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:visibility="gone">
 
-
-      </LinearLayout>
+        </com.github.mikephil.charting.charts.LineChart>
 
 
-  </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>

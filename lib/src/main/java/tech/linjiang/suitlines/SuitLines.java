@@ -274,7 +274,7 @@ public class SuitLines extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         calcAreas();
-        basePaint.setShader(buildPaintColor(defaultLineColor));
+       // basePaint.setShader(buildPaintColor(defaultLineColor));
         if (!datas.isEmpty()) {
             calcUnitXY();
         }
@@ -1058,7 +1058,7 @@ public class SuitLines extends View {
         if (colors == null || colors.length < 1) return;
         defaultLineColor = colors;
         basePaint.setColor(colors[0]);
-        basePaint.setShader(buildPaintColor(colors));
+       // basePaint.setShader(buildPaintColor(colors));
         if (!datas.isEmpty() && datas.size() == 1) {
             paints.get(0).set(basePaint);
             postInvalidate();
