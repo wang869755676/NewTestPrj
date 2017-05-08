@@ -9,17 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.gson.Gson;
 import com.station.nurse.newtestprj.R;
 import com.station.nurse.newtestprj.adapter.InfoRecyclerAdapter;
 import com.station.nurse.newtestprj.callBack.PumListCallBack;
 import com.station.nurse.newtestprj.model.Pum;
 import com.station.nurse.newtestprj.utils.Api;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
