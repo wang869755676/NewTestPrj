@@ -10,15 +10,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
 import com.station.nurse.newtestprj.R;
 import com.station.nurse.newtestprj.adapter.InfoRecyclerAdapter;
+import com.station.nurse.newtestprj.callBack.PumListCallBack;
 import com.station.nurse.newtestprj.model.Pum;
+import com.station.nurse.newtestprj.utils.Api;
+import com.tencent.bugly.crashreport.CrashReport;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Call;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,14 +54,33 @@ public class InfoFragment extends Fragment {
     }
 
     private void getData() {
-        dataList = new ArrayList<>();
+        OkHttpUtils
+                .get()
+                .url(Api.homeApi)
+                .build()
+                .execute(new PumListCallBack(){
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(List<Pum> response, int id) {
+                        if(response!=null){
+                            dataList=response;
+                            infoRv.setAdapter(new InfoRecyclerAdapter(dataList, getActivity()));
+                        }
+                    }
+                });
+    /*    dataList = new ArrayList<>();
         dataList.add(new Pum());
         dataList.add(new Pum());
         dataList.add(new Pum());
         dataList.add(new Pum());
         dataList.add(new Pum());
-        dataList.add(new Pum());
-        infoRv.setAdapter(new InfoRecyclerAdapter(dataList, getActivity()));
+        dataList.add(new Pum());*/
+
 
     }
 

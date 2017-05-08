@@ -77,5 +77,13 @@
             android:text="ml/h" />
     </LinearLayout>
 
+    <Button
+        android:background="@android:color/holo_blue_light"
+        android:layout_marginTop="20dp"
+        android:text="发送"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/param_send" />
+
 
 </LinearLayout>
