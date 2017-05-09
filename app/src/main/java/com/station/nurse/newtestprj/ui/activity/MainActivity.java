@@ -1,5 +1,6 @@
 package com.station.nurse.newtestprj.ui.activity;
 
+import android.app.ActivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.station.nurse.newtestprj.R;
@@ -65,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentList.add(new ParameterFragment());
         fragmentList.add(new SpeedFragment());
         mainVp.setAdapter(new MainFragmentAdapter(getSupportFragmentManager()));
-        new Thread(getThread).start();
+       // new Thread(getThread).start();
+        //getSystemService(Conte)
     }
 
     private class MainFragmentAdapter extends FragmentPagerAdapter{

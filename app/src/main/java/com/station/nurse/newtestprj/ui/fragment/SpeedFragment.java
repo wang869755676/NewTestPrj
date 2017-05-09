@@ -3,6 +3,8 @@ package com.station.nurse.newtestprj.ui.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +16,24 @@ import android.widget.GridView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.station.nurse.newtestprj.R;
+import com.station.nurse.newtestprj.adapter.InfoRecyclerAdapter;
+import com.station.nurse.newtestprj.callBack.PumListCallBack;
+import com.station.nurse.newtestprj.model.Pum;
 import com.station.nurse.newtestprj.model.SpeedModel;
+import com.station.nurse.newtestprj.utils.Api;
 import com.station.nurse.newtestprj.utils.FormateDate;
 import com.station.nurse.newtestprj.utils.ViewHolderUtil;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Call;
 import tech.linjiang.suitlines.SuitLines;
 import tech.linjiang.suitlines.Unit;
 
@@ -44,28 +54,23 @@ public class SpeedFragment extends Fragment {
     @Bind(R.id.speed_gv)
     GridView speedGv;
 
-    private List<SpeedModel> speedModels;
-    private int currentPosition = -1;
+    private List<Pum> dataList;
     private boolean[] removeNum;
-    private boolean isRemove = false;
+    private NumAdapter adapter;
 
-   /* private ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-    private LineData data;
-    private List<List<Entry>> values;
-    private List<Entry> value;
-    private List<String> days = new ArrayList<>();
+    private List<List<Unit>> datas;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    LineData data = new LineData(dataSets);
-                    speedLine.setData(data);
-                    speedLine.invalidate();
+                    getData();
                     break;
             }
         }
-    };*/
+    };
+    private Timer timer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,40 +79,85 @@ public class SpeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_speed, container, false);
         ButterKnife.bind(this, view);
         initView();
-
         return view;
     }
 
-    private void initView() {
-        builder = new SuitLines.LineBuilder();
-        lines = new ArrayList<>();
+    private void getData() {
+        OkHttpUtils
+                .get()
+                .url(Api.homeApi)
+                .build()
+                .execute(new PumListCallBack() {
 
-        speedModels = new ArrayList<>();
-        speedModels.add(new SpeedModel());
-        speedModels.add(new SpeedModel());
-        removeNum = new boolean[speedModels.size()];
-        speedGv.setAdapter(new NumAdapter());
-        init();
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(List<Pum> response, int id) {
+                        if (response != null) {
+                            if (dataList == null) {
+                                dataList = response;
+                                initDatas();
+                                removeNum = new boolean[dataList.size()];
+                                adapter = new NumAdapter();
+                                speedGv.setAdapter(new NumAdapter());
+                            } else {
+                                dataList.clear();
+                                dataList.addAll(response);
+                                adapter.notifyDataSetChanged();
+                            }
+                            init();
+
+                        }
+                    }
+                });
+    }
+
+
+    private void initView() {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.sendEmptyMessage(0);
+            }
+        }, 0, 300000);
+
+    }
+
+    /**
+     *  初始化datas集合
+     */
+    private void initDatas() {
+        datas=new ArrayList<>();
+        for (int i=0;i<dataList.size();i++){
+            datas.add(new ArrayList<Unit>());
+        }
     }
 
 
     public void init() {
-        if (builder != null)
-            builder = null;
-        builder = new SuitLines.LineBuilder();
+        if (dataList != null) {
+            if (builder != null)
+                builder = null;
+            builder = new SuitLines.LineBuilder();
 
-        for (int j = 0; j < speedModels.size(); j++) {
-            if (removeNum[j]) {
-                continue;
+            for (int j = 0; j < dataList.size(); j++) {
+                if (removeNum[j]) {
+                    continue;
+                }
+                datas.get(j).add(new Unit(getSpeedNum(dataList.get(j).getRealSpeed()), FormateDate.formateDate("MM-dd HH:ss", System.currentTimeMillis())));
+                lines = new ArrayList<>();
+                for (int i=0;i<datas.get(j).size();i++){
+                    lines.add(datas.get(j).get(i));
+                }
+                builder.add(lines, color[j]);
             }
-            lines = new ArrayList<>();
-            for (int i = 0; i < 50; i++) {
-                lines.add(new Unit(new SecureRandom().nextInt(128), FormateDate.formateDate("MM-dd HH:ss", System.currentTimeMillis())));
-            }
-            builder.add(lines, color[j]);
+
+            builder.build(suitlines, true);
         }
 
-        builder.build(suitlines, true);
 
     }
 
@@ -121,12 +171,12 @@ public class SpeedFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return speedModels != null ? speedModels.size() : 0;
+            return dataList != null ? dataList.size() : 0;
         }
 
         @Override
         public Object getItem(int position) {
-            return speedModels.get(position);
+            return dataList.get(position);
         }
 
         @Override
@@ -151,10 +201,28 @@ public class SpeedFragment extends Fragment {
 
     private void hideView(int position, boolean isChecked) {
         if (!isChecked) {
-            removeNum[position]=true;
+            removeNum[position] = true;
         } else {
-            removeNum[position]=false;
+            removeNum[position] = false;
         }
         init();
+    }
+
+    private int getSpeedNum(String speed) {
+        int speedNum = 0;
+        speed = speed.replace("ml/h", "");
+        try {
+            speedNum = Integer.parseInt(speed);
+        } catch (Exception e) {
+            speedNum = 0;
+        }
+        return speedNum;
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
     }
 }
