@@ -21,12 +21,18 @@ public class ControlScrollViewPager extends ViewPager {
         scrollable = enable;
     }
 
+
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent ev) {
         if (scrollable) {
-            return super.onInterceptTouchEvent(event);
+            //允许滑动则应该调用父类的方法
+            return super.onTouchEvent(ev);
         } else {
-            return false;
+            //禁止滑动则不做任何操作，直接返回true即可
+            return true;
         }
     }
+
+
+
 }  

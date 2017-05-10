@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 /**
  * 创建人：
  * 创建时间： 2017/4/24
@@ -15,17 +16,9 @@ import java.util.Date;
 
 public class FormateDate {
 
-    /**
-     * 将时间戳转化为制定的格式
-     *
-     * @param formate
-     * @param time
-     * @return
-     */
-    public static String formateDate(String formate, long time) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(formate);
-        return dateFormat.format(new Date(time ));
-
+    public static  String formatDate(String formate, Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat(formate);
+        return sdf.format(date);
     }
 
     /**

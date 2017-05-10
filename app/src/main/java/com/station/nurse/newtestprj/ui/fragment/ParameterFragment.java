@@ -80,12 +80,12 @@ public class ParameterFragment extends Fragment {
                     paramModel.Sum=paramSpeed.getText().toString()+"ml";
                     paramModel.Total=paramTotal.getText().toString()+"ml/h";
 
-                    if(paramModel.Total!=null && !"".equals(paramModel.Total)){
+                    if(paramModel.Total==null && "".equals(paramModel.Total)){
                         ToastUtils.showToast(getActivity(),"请输入总量");
                         return;
                     }
 
-                    if(paramModel.Sum!=null && !"".equals(paramModel.Sum)){
+                    if(paramModel.Sum==null && "".equals(paramModel.Sum)){
                         ToastUtils.showToast(getActivity(),"请输入流速");
                         return;
                     }

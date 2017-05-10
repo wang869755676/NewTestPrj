@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -108,7 +110,7 @@ public class SpeedFragment extends Fragment {
                                 dataList.addAll(response);
                                 adapter.notifyDataSetChanged();
                             }
-                            init();
+                            init(false);
 
                         }
                     }
@@ -123,7 +125,7 @@ public class SpeedFragment extends Fragment {
             public void run() {
                 handler.sendEmptyMessage(0);
             }
-        }, 0, 300000);
+        }, 0, 5000);
 
     }
 
@@ -138,17 +140,19 @@ public class SpeedFragment extends Fragment {
     }
 
 
-    public void init() {
+    public void init(boolean f) {
         if (dataList != null) {
             if (builder != null)
                 builder = null;
             builder = new SuitLines.LineBuilder();
 
             for (int j = 0; j < dataList.size(); j++) {
+                if(!f){
+                    datas.get(j).add(new Unit(getSpeedNum(dataList.get(j).getRealSpeed()), FormateDate.formatDate("MM-dd HH:mm",new Date())));
+                }
                 if (removeNum[j]) {
                     continue;
                 }
-                datas.get(j).add(new Unit(getSpeedNum(dataList.get(j).getRealSpeed()), FormateDate.formateDate("MM-dd HH:ss", System.currentTimeMillis())));
                 lines = new ArrayList<>();
                 for (int i=0;i<datas.get(j).size();i++){
                     lines.add(datas.get(j).get(i));
@@ -156,7 +160,7 @@ public class SpeedFragment extends Fragment {
                 builder.add(lines, color[j]);
             }
 
-            builder.build(suitlines, true);
+            builder.build(suitlines, false);
         }
 
 
@@ -206,15 +210,16 @@ public class SpeedFragment extends Fragment {
         } else {
             removeNum[position] = false;
         }
-        init();
+        init(true);
     }
 
-    private int getSpeedNum(String speed) {
-        int speedNum = 0;
+    private float getSpeedNum(String speed) {
+        float speedNum = 0;
         speed = speed.replace("ml/h", "");
         try {
-            speedNum = Integer.parseInt(speed);
+            speedNum = (int) Float.parseFloat(speed);
         } catch (Exception e) {
+            Log.e("===",e.getMessage());
             speedNum = 0;
         }
         return speedNum;

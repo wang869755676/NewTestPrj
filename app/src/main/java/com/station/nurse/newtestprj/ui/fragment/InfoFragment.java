@@ -61,14 +61,11 @@ public class InfoFragment extends Fragment {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         Log.e("====","========"+e.getMessage());
-                        ToastUtils.showToast(getActivity(),"网络请求的错误信息"+e.getMessage());
 
                     }
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
-                        ToastUtils.showToast(getActivity(),"数据集合"+response);
-                        Log.e("====","========"+response);
                         if(response!=null){
                             dataList=response;
                             infoRv.setAdapter(new InfoRecyclerAdapter(dataList, getActivity()));
