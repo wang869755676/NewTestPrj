@@ -30,7 +30,6 @@ public class MyApplication extends Application {
 // 初始化Bugly
         CrashReport.initCrashReport(context, "56cc429659", true, strategy);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new LoggerInterceptor("==="))
                 .connectTimeout(10000L, TimeUnit.MILLISECONDS)
                 .readTimeout(10000L, TimeUnit.MILLISECONDS)
                 //其他配置

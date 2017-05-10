@@ -26,7 +26,6 @@ public abstract class PumListCallBack extends Callback<List<Pum>>
 {
     @Override
     public List<Pum> parseNetworkResponse(Response response, int id) throws Exception {
-        Log.e("====","========"+response.body()+"====="+response.code());
         if(response.isSuccessful()){
             Gson gson=new Gson();
 

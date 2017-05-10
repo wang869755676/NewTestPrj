@@ -74,6 +74,9 @@ public class SpeedFragment extends Fragment {
         }
     };
     private Timer timer;
+    private int startIndex=60;
+    private int endIndex=0;
+    private List<Unit> temps=new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,7 +129,7 @@ public class SpeedFragment extends Fragment {
             public void run() {
                 handler.sendEmptyMessage(0);
             }
-        }, 0, 60000);
+        }, 0, 1000);
 
     }
 
@@ -149,8 +152,12 @@ public class SpeedFragment extends Fragment {
 
             for (int j = 0; j < dataList.size(); j++) {
                 if(datas.get(j).size()>120){
-                   datas.get(j).clear();
-                    datas.get(j).addAll(datas.get(j).subList(60,datas.get(j).size()));
+                    temps.clear();
+                    temps.addAll(datas.get(j));
+                    Log.e("===",temps.size()+"temps");
+                    datas.get(j).clear();
+                    Log.e("===",temps.size()+"temps");
+                    datas.get(j).addAll(temps.subList(60,temps.size()));
                 }
                 if(!f){
                     datas.get(j).add(new Unit(getSpeedNum(dataList.get(j).getRealSpeed()), FormateDate.formatDate("MM-dd HH:mm",new Date())));

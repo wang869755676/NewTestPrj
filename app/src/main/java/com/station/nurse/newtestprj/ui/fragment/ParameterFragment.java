@@ -47,6 +47,7 @@ public class ParameterFragment extends Fragment {
     private List<String> nums;
     private List<Pum> dataList;
     private ParamModel paramModel;
+    private List<ParamModel> models;
     private int currentPosition = 0;
 
     @Override
@@ -75,25 +76,30 @@ public class ParameterFragment extends Fragment {
         paramSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(dataList!=null){
+                if (dataList != null) {
+                    if (models == null)
+                        models = new ArrayList<ParamModel>();
                     paramModel = new ParamModel();
-                    paramModel.Slot =dataList.get(currentPosition).getSlot()+"";
-                    paramModel.Sum=paramSpeed.getText().toString()+"ml";
-                    paramModel.Total=paramTotal.getText().toString()+"ml/h";
-
-                    if(paramModel.Total==null && "".equals(paramModel.Total)){
-                        ToastUtils.showToast(getActivity(),"请输入总量");
+                    paramModel.Slot = dataList.get(currentPosition).getSlot() + "";
+                    paramModel.Sum = paramSpeed.getText().toString();
+                    paramModel.Total = paramTotal.getText().toString();
+                    models.add(paramModel);
+                    if (paramModel.Total == null || "".equals(paramModel.Total)) {
+                        ToastUtils.showToast(getActivity(), "请输入总量");
                         return;
                     }
 
-                    if(paramModel.Sum==null && "".equals(paramModel.Sum)){
-                        ToastUtils.showToast(getActivity(),"请输入流速");
+                    if (paramModel.Sum == null || "".equals(paramModel.Sum)) {
+                        ToastUtils.showToast(getActivity(), "请输入流速");
                         return;
                     }
+                    paramModel.Sum = paramModel.Sum + "ml";
+                    paramModel.Total = paramModel.Sum + "ml/h";
+                    Log.e("===",new Gson().toJson(models)+"--------------------------------");
                     OkHttpUtils
                             .post()
                             .url(Api.paramApi)
-                            .addParams("SendPara",new Gson().toJson(paramModel))
+                            .addParams("SendPara", new Gson().toJson(paramModel))
                             .build()
                             .execute(new StringCallback() {
                                 @Override
@@ -103,7 +109,10 @@ public class ParameterFragment extends Fragment {
 
                                 @Override
                                 public void onResponse(String response, int id) {
-                                    Log.e("===",response+"");
+                                    ToastUtils.showToast(getActivity(), "设置成功");
+                                    paramSpeed.setText("");
+                                    paramTotal.setText("");
+                                    models.clear();
                                 }
                             });
 
@@ -145,8 +154,6 @@ public class ParameterFragment extends Fragment {
         paramNum.attachDataSource(nums);*/
 
     }
-
-
 
 
     @Override
