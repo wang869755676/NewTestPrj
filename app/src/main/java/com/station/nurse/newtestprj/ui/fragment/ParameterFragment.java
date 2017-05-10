@@ -71,6 +71,44 @@ public class ParameterFragment extends Fragment {
 
             }
         });
+        paramSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dataList!=null){
+                    paramModel = new ParamModel();
+                    paramModel.Slot =dataList.get(currentPosition).getSlot()+"";
+                    paramModel.Sum=paramSpeed.getText().toString()+"ml";
+                    paramModel.Total=paramTotal.getText().toString()+"ml/h";
+
+                    if(paramModel.Total!=null && !"".equals(paramModel.Total)){
+                        ToastUtils.showToast(getActivity(),"请输入总量");
+                        return;
+                    }
+
+                    if(paramModel.Sum!=null && !"".equals(paramModel.Sum)){
+                        ToastUtils.showToast(getActivity(),"请输入流速");
+                        return;
+                    }
+                    OkHttpUtils
+                            .post()
+                            .url(Api.paramApi)
+                            .addParams("SendPara",new Gson().toJson(paramModel))
+                            .build()
+                            .execute(new StringCallback() {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+
+                                }
+                            });
+
+                }
+            }
+        });
     }
 
     private void initData() {
@@ -107,43 +145,7 @@ public class ParameterFragment extends Fragment {
 
     }
 
-    @OnClick(R.id.param_send)
-    public void onClick(View view) {
-        if(dataList!=null){
-            paramModel = new ParamModel();
-            paramModel.Slot =dataList.get(currentPosition).getSlot()+"";
-            paramModel.Sum=paramSpeed.getText().toString()+"ml";
-            paramModel.Total=paramTotal.getText().toString()+"ml/h";
 
-            if(paramModel.Total!=null && !"".equals(paramModel.Total)){
-                ToastUtils.showToast(getActivity(),"请输入总量");
-                return;
-            }
-
-            if(paramModel.Sum!=null && !"".equals(paramModel.Sum)){
-                ToastUtils.showToast(getActivity(),"请输入流速");
-                return;
-            }
-            OkHttpUtils
-                    .post()
-                    .url(Api.paramApi)
-                    .addParams("SendPara",new Gson().toJson(paramModel))
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-
-                        }
-
-                        @Override
-                        public void onResponse(String response, int id) {
-
-                        }
-                    });
-
-        }
-
-    }
 
     @Override
     public void onDestroyView() {

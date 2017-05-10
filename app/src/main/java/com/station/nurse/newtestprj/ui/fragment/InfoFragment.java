@@ -87,7 +87,7 @@ public class InfoFragment extends Fragment {
     }
 
     private void initView() {
-        infoSipRefresh.setRefreshing(false);
+        infoSipRefresh.setEnabled(false);
         infoSipRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

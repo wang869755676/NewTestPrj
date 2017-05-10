@@ -68,11 +68,18 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
             itemRealSpeed = (TextView) itemView.findViewById(R.id.item_info_realSpeed);
             itemSerNum = (TextView) itemView.findViewById(R.id.item_info_serNum);
             itemNum = (TextView) itemView.findViewById(R.id.item_info_sn);
+
+          itemType= (TextView) itemView.findViewById(R.id.item_info_type);
+            itemModel= (TextView) itemView.findViewById(R.id.item_info_model);
+            itemState= (TextView) itemView.findViewById(R.id.item_info_statue);
+            itemRate= (TextView) itemView.findViewById(R.id.item_info_rate);
+            itemAlarm= (TextView) itemView.findViewById(R.id.item_info_alarm);
+            itemAlarmTime= (TextView) itemView.findViewById(R.id.item_info_alarmTime);
         }
 
         public void bindData(Pum pum) {
             itemNum.setText(pum.getSlot() + "号泵");
-            itemSerNum.setText("设备序列号:    " + pum.getSn());
+            itemSerNum.setText("设备序列号:" + pum.getSn());
             itemRealSpeed.setText("实时流速: " + pum.getRealSpeed());
             itemSpeed.setText("流速: " + pum.getSpeed());
             itemName.setText("药名: " + pum.getDrug());
@@ -84,6 +91,7 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
             itemRate.setText("输液进度: " + pum.getRate());
             itemAlarm.setText("告警事件: " + pum.getAlarm());
             itemAlarmTime.setText("告警时间: " + pum.getAlarmTime());
+            itemType.setText("设备类型:"+pum.getType()+"  ");
         }
     }
 }

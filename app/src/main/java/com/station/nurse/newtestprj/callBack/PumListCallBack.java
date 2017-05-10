@@ -8,6 +8,8 @@ import com.station.nurse.newtestprj.model.Pum;
 import com.station.nurse.newtestprj.utils.ToastUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
+import org.json.JSONArray;
+
 import java.util.List;
 import okhttp3.Response;
 
@@ -27,7 +29,13 @@ public abstract class PumListCallBack extends Callback<List<Pum>>
         Log.e("====","========"+response.body()+"====="+response.code());
         if(response.isSuccessful()){
             Gson gson=new Gson();
-            return  gson.fromJson(response.body().toString(),new TypeToken<Pum>(){}.getType());
+
+            if(response.body().toString()!=null &&!"".equals(response.body().toString()) ){
+                JSONArray jsonArray=new JSONArray(response.body().string());
+                return  gson.fromJson(jsonArray.toString(),new TypeToken<List<Pum>>(){}.getType());
+            }
+            return null;
+
         }
 
         return null;
