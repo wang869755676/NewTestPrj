@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.station.nurse.newtestprj.adapter.InfoRecyclerAdapter;
 import com.station.nurse.newtestprj.callBack.PumListCallBack;
 import com.station.nurse.newtestprj.model.Pum;
 import com.station.nurse.newtestprj.utils.Api;
+import com.station.nurse.newtestprj.utils.ToastUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.List;
@@ -58,11 +60,15 @@ public class InfoFragment extends Fragment {
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        Log.e("====","========"+e.getMessage());
+                        ToastUtils.showToast(getActivity(),"网络请求的错误信息"+e.getMessage());
 
                     }
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
+                        ToastUtils.showToast(getActivity(),"数据集合"+response);
+                        Log.e("====","========"+response);
                         if(response!=null){
                             dataList=response;
                             infoRv.setAdapter(new InfoRecyclerAdapter(dataList, getActivity()));

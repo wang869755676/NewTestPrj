@@ -25,7 +25,7 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
 
     @Override
     public InfoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.item_info,null);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_info, null);
 
         return new InfoViewHolder(view);
     }
@@ -40,7 +40,7 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
         return dataList != null ? dataList.size() : 0;
     }
 
-   public class InfoViewHolder extends RecyclerView.ViewHolder {
+    public class InfoViewHolder extends RecyclerView.ViewHolder {
 
         private TextView itemNum;
         private TextView itemSerNum;
@@ -50,6 +50,13 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
         private TextView itemTotal;
         private TextView itemTime;
         private TextView itemName;
+
+        private TextView itemType;
+        private TextView itemModel;
+        private TextView itemState;
+        private TextView itemRate;
+        private TextView itemAlarm;
+        private TextView itemAlarmTime;
 
         public InfoViewHolder(View itemView) {
             super(itemView);
@@ -64,14 +71,19 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
         }
 
         public void bindData(Pum pum) {
-            itemNum.setText(pum.getSn() + "号泵");
-            itemSerNum.setText("设备序列号:                               " + pum.getSlot());
+            itemNum.setText(pum.getSlot() + "号泵");
+            itemSerNum.setText("设备序列号:    " + pum.getSn());
             itemRealSpeed.setText("实时流速: " + pum.getRealSpeed());
             itemSpeed.setText("流速: " + pum.getSpeed());
             itemName.setText("药名: " + pum.getDrug());
             itemSurplus.setText("剩余量: " + pum.getRemain());
             itemTotal.setText("总量: " + pum.getSum());
             itemTime.setText("剩余时间: " + pum.getLastTime());
+            itemModel.setText("型号: " + pum.getModel());
+            itemState.setText("连接状态: " + pum.getLinkStatus());
+            itemRate.setText("输液进度: " + pum.getRate());
+            itemAlarm.setText("告警事件: " + pum.getAlarm());
+            itemAlarmTime.setText("告警时间: " + pum.getAlarmTime());
         }
     }
 }

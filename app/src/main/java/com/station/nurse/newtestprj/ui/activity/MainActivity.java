@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentList.add(new ParameterFragment());
         fragmentList.add(new SpeedFragment());
         mainVp.setAdapter(new MainFragmentAdapter(getSupportFragmentManager()));
-       // new Thread(getThread).start();
+        new Thread(getThread).start();
         //getSystemService(Conte)
     }
 

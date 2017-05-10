@@ -117,6 +117,7 @@ public class SpeedFragment extends Fragment {
 
 
     private void initView() {
+        timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

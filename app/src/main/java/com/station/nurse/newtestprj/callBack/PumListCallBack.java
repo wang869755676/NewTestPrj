@@ -1,8 +1,11 @@
 package com.station.nurse.newtestprj.callBack;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.station.nurse.newtestprj.model.Pum;
+import com.station.nurse.newtestprj.utils.ToastUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
 import java.util.List;
@@ -21,6 +24,7 @@ public abstract class PumListCallBack extends Callback<List<Pum>>
 {
     @Override
     public List<Pum> parseNetworkResponse(Response response, int id) throws Exception {
+        Log.e("====","========"+response.body()+"====="+response.code());
         if(response.isSuccessful()){
             Gson gson=new Gson();
             return  gson.fromJson(response.body().toString(),new TypeToken<Pum>(){}.getType());
