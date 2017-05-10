@@ -69,6 +69,7 @@ public class InfoFragment extends Fragment {
                         if(response!=null){
                             dataList=response;
                             infoRv.setAdapter(new InfoRecyclerAdapter(dataList, getActivity()));
+
                         }
                     }
                 });
@@ -95,11 +96,11 @@ public class InfoFragment extends Fragment {
 
     }
 
+
+
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDetach() {
+        super.onDetach();
         ButterKnife.unbind(this);
     }
-
-
 }

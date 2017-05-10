@@ -125,7 +125,7 @@ public class SpeedFragment extends Fragment {
             public void run() {
                 handler.sendEmptyMessage(0);
             }
-        }, 0, 5000);
+        }, 0, 60000);
 
     }
 
@@ -160,7 +160,7 @@ public class SpeedFragment extends Fragment {
                 builder.add(lines, color[j]);
             }
 
-            builder.build(suitlines, false);
+            builder.build(suitlines, true);
         }
 
 
@@ -193,6 +193,7 @@ public class SpeedFragment extends Fragment {
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_num, null);
             CheckBox box = ViewHolderUtil.ViewHolder.get(view, R.id.item_check);
+            box.setText(dataList.get(position).getSlot()+"号泵");
             box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -230,5 +231,11 @@ public class SpeedFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         timer.cancel();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ButterKnife.unbind(this);
     }
 }
