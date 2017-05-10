@@ -28,6 +28,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -147,6 +148,10 @@ public class SpeedFragment extends Fragment {
             builder = new SuitLines.LineBuilder();
 
             for (int j = 0; j < dataList.size(); j++) {
+                if(datas.get(j).size()>120){
+                   datas.get(j).clear();
+                    datas.get(j).addAll(datas.get(j).subList(60,datas.get(j).size()));
+                }
                 if(!f){
                     datas.get(j).add(new Unit(getSpeedNum(dataList.get(j).getRealSpeed()), FormateDate.formatDate("MM-dd HH:mm",new Date())));
                 }
