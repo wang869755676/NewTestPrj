@@ -2,6 +2,8 @@ package com.station.nurse.newtestprj.ui.fragment;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,7 +43,16 @@ public class InfoFragment extends Fragment {
     private List<Pum> dataList;
     private InfoRecyclerAdapter adapter;
     private Timer timer;
-
+/*    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                   infoSipRefresh.setRefreshing(true);
+                    break;
+            }
+        }
+    };*/
     public InfoFragment() {
     }
 
@@ -52,7 +63,7 @@ public class InfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         ButterKnife.bind(this, view);
         initView();
-       // getData();
+        getData();
         return view;
     }
 
@@ -71,6 +82,7 @@ public class InfoFragment extends Fragment {
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
+                        infoSipRefresh.setRefreshing(false);
                         if (response != null) {
                             if(adapter==null){
                                 dataList = response;
@@ -87,13 +99,7 @@ public class InfoFragment extends Fragment {
                         }
                     }
                 });
-    /*    dataList = new ArrayList<>();
-        dataList.add(new Pum());
-        dataList.add(new Pum());
-        dataList.add(new Pum());
-        dataList.add(new Pum());
-        dataList.add(new Pum());
-        dataList.add(new Pum());*/
+
 
 
     }
@@ -111,7 +117,7 @@ public class InfoFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                getData();
+               getData();
             }
         }, 0, 60000);
     }

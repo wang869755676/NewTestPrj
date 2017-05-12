@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
     <declare-styleable name="NiceSpinner">
         <attr name="arrowTint" format="color" />
         <attr name="hideArrow" format="boolean" />
         <attr name="backgroundSelector" format="integer"/>
         <attr name="textTint" format="color"/>
+    </declare-styleable>
+    <declare-styleable name="BBox">
+        <attr name="check_style">
+            <enum name="fork" value="0" />
+            <enum name="hook" value="1" />
+        </attr>
+        <attr name="color_before" format="color" />
+        <attr name="color_after" format="color" />
+        <attr name="check_text" format="string" />
+        <attr name="show_border" format="boolean"/>
+        <attr name="is_circle_border" format="boolean"/>
     </declare-styleable>
 </resources>
