@@ -71,7 +71,6 @@ public class InfoFragment extends Fragment {
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
-                        //Log.e("====", "========" +response);
                         if (response != null) {
                             if(adapter==null){
                                 dataList = response;
@@ -114,7 +113,7 @@ public class InfoFragment extends Fragment {
             public void run() {
                 getData();
             }
-        }, 0, 12000);
+        }, 0, 60000);
     }
 
 

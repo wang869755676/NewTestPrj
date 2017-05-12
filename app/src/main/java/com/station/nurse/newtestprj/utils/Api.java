@@ -11,5 +11,5 @@ package com.station.nurse.newtestprj.utils;
 
 public class Api {
     public static String homeApi="http://192.168.0.123/output.php";
-    public static  String paramApi="http://192.168.0.123/send.php";
+    public static  String paramApi="http://192.168.15.100/send.php";
 }
