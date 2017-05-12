@@ -407,6 +407,7 @@ public class SuitLines extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         if (datas.isEmpty()) return;
         // lines
         canvas.save();
@@ -426,7 +427,10 @@ public class SuitLines extends View {
             drawLines(canvas, suitEdge[0], suitEdge[1]);
         }
         // x 蓝色会稍增加
+        if(suitEdge==null)
+            suitEdge=findSuitEdgeInVisual2();
         drawX(canvas, suitEdge[0], suitEdge[1]);
+        drawLines(canvas, suitEdge[0], suitEdge[1]);
         if (lastOffset != offset) {
             clickIndexs = null;
         }
@@ -643,33 +647,44 @@ public class SuitLines extends View {
         for (int i = 0; i < paths.size(); i++) {
             paths.get(i).reset();
         }
-        for (int i = startIndex; i <= endIndex; i++) {
+        Log.e("===","ddddddddd"+endIndex);
+        if(endIndex==0){
+
             for (int j = 0; j < datas.size(); j++) {
-                Unit current = datas.get(j).get(i);
+                Unit current = datas.get(j).get(0);
                 float curY = linesArea.bottom - (linesArea.bottom - current.getXY().y) * current.getPercent();
-                if (i == startIndex) {
-                    paths.get(j).moveTo(current.getXY().x, curY);
-                    continue;
-                }
-                if (lineType == SEGMENT) {
-                    paths.get(j).lineTo(current.getXY().x, curY);
-                } else if (lineType == CURVE) {
-                    // 到这里肯定不是起始点，所以可以减1
-                    Unit previous = datas.get(j).get(i - 1);
-                    // 两个锚点的坐标x为中点的x，y分别是两个连接点的y
-                    paths.get(j).cubicTo((previous.getXY().x + current.getXY().x) / 2,
-                            linesArea.bottom - (linesArea.bottom - previous.getXY().y) * previous.getPercent(),
-                            (previous.getXY().x + current.getXY().x) / 2, curY,
-                            current.getXY().x, curY);
-                }
-                if (isLineFill() && i == endIndex) {
-                    paths.get(j).lineTo(current.getXY().x, linesArea.bottom);
-                    paths.get(j).lineTo(datas.get(j).get(startIndex).getXY().x, linesArea.bottom);
-                    paths.get(j).close();
+                 canvas.drawCircle(xArea.left,curY,2,paints.get(j));
+            }
+        }else{
+            for (int i = startIndex; i <= endIndex; i++) {
+                for (int j = 0; j < datas.size(); j++) {
+                    Unit current = datas.get(j).get(i);
+                    float curY = linesArea.bottom - (linesArea.bottom - current.getXY().y) * current.getPercent();
+                    if (i == startIndex) {
+                        paths.get(j).moveTo(current.getXY().x, curY);
+                        continue;
+                    }
+                    if (lineType == SEGMENT) {
+                        paths.get(j).lineTo(current.getXY().x, curY);
+                    } else if (lineType == CURVE) {
+                        // 到这里肯定不是起始点，所以可以减1
+                        Unit previous = datas.get(j).get(i - 1);
+                        // 两个锚点的坐标x为中点的x，y分别是两个连接点的y
+                        paths.get(j).cubicTo((previous.getXY().x + current.getXY().x) / 2,
+                                linesArea.bottom - (linesArea.bottom - previous.getXY().y) * previous.getPercent(),
+                                (previous.getXY().x + current.getXY().x) / 2, curY,
+                                current.getXY().x, curY);
+                    }
+                    if (isLineFill() && i == endIndex) {
+                        paths.get(j).lineTo(current.getXY().x, linesArea.bottom);
+                        paths.get(j).lineTo(datas.get(j).get(startIndex).getXY().x, linesArea.bottom);
+                        paths.get(j).close();
+                    }
                 }
             }
+            drawExsitDirectly(canvas);
         }
-        drawExsitDirectly(canvas);
+
     }
 
     /**
@@ -715,8 +730,14 @@ public class SuitLines extends View {
      * @param endIndex
      */
     private void drawX(Canvas canvas, int startIndex, int endIndex) {
-        canvas.drawLine(datas.get(0).get(startIndex).getXY().x, xArea.top,
-                datas.get(0).get(endIndex).getXY().x, xArea.top, xyPaint);
+        if(endIndex==0){
+            canvas.drawLine(xArea.left, xArea.top,
+                    xArea.right, xArea.top, xyPaint);
+        }else{
+            canvas.drawLine(datas.get(0).get(startIndex).getXY().x, xArea.top,
+                    datas.get(0).get(endIndex).getXY().x, xArea.top, xyPaint);
+        }
+
         for (int i = startIndex; i <= endIndex; i++) {
             String extX = datas.get(0).get(i).getExtX();
             if (TextUtils.isEmpty(extX)) {
@@ -729,7 +750,12 @@ public class SuitLines extends View {
             } else {
                 xyPaint.setTextAlign(Paint.Align.CENTER);
             }
-            canvas.drawText(extX, datas.get(0).get(i).getXY().x, Util.calcTextSuitBaseY(xArea, xyPaint), xyPaint);
+            if(endIndex==0){
+                canvas.drawText(extX,xArea.left, Util.calcTextSuitBaseY(xArea, xyPaint), xyPaint);
+            }else{
+                canvas.drawText(extX, datas.get(0).get(i).getXY().x, Util.calcTextSuitBaseY(xArea, xyPaint), xyPaint);
+            }
+
         }
     }
 
@@ -1289,7 +1315,6 @@ public class SuitLines extends View {
             datas.put(bakIndex, data);
             colors.put(bakIndex, color);
             curIndex++;
-            Log.e("===",datas.size()+"datas size");
             return this;
         }
 
