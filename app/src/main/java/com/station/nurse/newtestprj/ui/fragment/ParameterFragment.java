@@ -93,8 +93,6 @@ public class ParameterFragment extends Fragment {
                         ToastUtils.showToast(getActivity(), "请输入流速");
                         return;
                     }
-                    paramModel.Sum = paramModel.Sum + "ml";
-                    paramModel.Total = paramModel.Sum + "ml/h";
                     Log.e("===",new Gson().toJson(models)+"--------------------------------");
                     OkHttpUtils
                             .post()

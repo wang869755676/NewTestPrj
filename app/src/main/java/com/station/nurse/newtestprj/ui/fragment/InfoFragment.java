@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.station.nurse.newtestprj.R;
 import com.station.nurse.newtestprj.adapter.InfoRecyclerAdapter;
 import com.station.nurse.newtestprj.callBack.PumListCallBack;
@@ -19,6 +20,8 @@ import com.station.nurse.newtestprj.utils.ToastUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,6 +39,8 @@ public class InfoFragment extends Fragment {
     SwipeRefreshLayout infoSipRefresh;
 
     private List<Pum> dataList;
+    private InfoRecyclerAdapter adapter;
+    private Timer timer;
 
     public InfoFragment() {
     }
@@ -47,7 +52,7 @@ public class InfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_info, container, false);
         ButterKnife.bind(this, view);
         initView();
-        getData();
+       // getData();
         return view;
     }
 
@@ -56,19 +61,29 @@ public class InfoFragment extends Fragment {
                 .get()
                 .url(Api.homeApi)
                 .build()
-                .execute(new PumListCallBack(){
+                .execute(new PumListCallBack() {
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        Log.e("====","========"+e.getMessage());
+
 
                     }
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
-                        if(response!=null){
-                            dataList=response;
-                            infoRv.setAdapter(new InfoRecyclerAdapter(dataList, getActivity()));
+                        //Log.e("====", "========" +response);
+                        if (response != null) {
+                            if(adapter==null){
+                                dataList = response;
+                                adapter=new InfoRecyclerAdapter(dataList, getActivity());
+                                infoRv.setAdapter(adapter);
+                            }else{
+                                dataList.clear();
+                                dataList.addAll(response);
+                                adapter.notifyDataSetChanged();
+                            }
+
+
 
                         }
                     }
@@ -93,14 +108,27 @@ public class InfoFragment extends Fragment {
             }
         });
         infoRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getData();
+            }
+        }, 0, 12000);
     }
-
 
 
     @Override
     public void onDetach() {
         super.onDetach();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (timer!=null){
+            timer.cancel();
+        }
     }
 }

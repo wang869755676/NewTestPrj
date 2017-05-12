@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentList.add(new ParameterFragment());
         fragmentList.add(new SpeedFragment());
         mainVp.setAdapter(new MainFragmentAdapter(getSupportFragmentManager()));
+       // mainVp.setOffscreenPageLimit(3);
 
     }
 

@@ -48,8 +48,7 @@ public class SpeedFragment extends Fragment {
 
 
     private int[] color = {Color.RED, 0xFF5E2612, 0xFFE3CF57, 0xFFED9121, 0xFFD2691E, 0xFF734A12};
-    @Bind(R.id.speed_line)
-    LineChart speedLine;
+
     @Bind(R.id.suitlines)
     SuitLines suitlines;
     SuitLines.LineBuilder builder;
@@ -74,8 +73,6 @@ public class SpeedFragment extends Fragment {
         }
     };
     private Timer timer;
-    private int startIndex=60;
-    private int endIndex=0;
     private List<Unit> temps=new ArrayList<>();
 
     @Override
@@ -102,6 +99,7 @@ public class SpeedFragment extends Fragment {
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
+                        Log.e("===",response.size()+"------------");
                         if (response != null) {
                             if (dataList == null) {
                                 dataList = response;
@@ -129,7 +127,7 @@ public class SpeedFragment extends Fragment {
             public void run() {
                 handler.sendEmptyMessage(0);
             }
-        }, 0, 1000);
+        }, 0, 60000);
 
     }
 
@@ -169,6 +167,7 @@ public class SpeedFragment extends Fragment {
                 for (int i=0;i<datas.get(j).size();i++){
                     lines.add(datas.get(j).get(i));
                 }
+
                 builder.add(lines, color[j]);
             }
 
