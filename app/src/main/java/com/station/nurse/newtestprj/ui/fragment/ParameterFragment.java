@@ -81,7 +81,7 @@ public class ParameterFragment extends Fragment {
                         models = new ArrayList<ParamModel>();
                     paramModel = new ParamModel();
                     paramModel.Slot = dataList.get(currentPosition).getSlot() + "";
-                    paramModel.Sum = paramSpeed.getText().toString();
+                    paramModel.Speed= paramSpeed.getText().toString();
                     paramModel.Total = paramTotal.getText().toString();
                     models.add(paramModel);
                     if (paramModel.Total == null || "".equals(paramModel.Total)) {
@@ -89,7 +89,7 @@ public class ParameterFragment extends Fragment {
                         return;
                     }
 
-                    if (paramModel.Sum == null || "".equals(paramModel.Sum)) {
+                    if (paramModel.Speed == null || "".equals(paramModel.Speed)) {
                         ToastUtils.showToast(getActivity(), "请输入流速");
                         return;
                     }

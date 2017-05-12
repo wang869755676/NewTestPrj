@@ -119,7 +119,7 @@ public class InfoFragment extends Fragment {
             public void run() {
                getData();
             }
-        }, 0, 60000);
+        }, 0, 1000);
     }
 
 

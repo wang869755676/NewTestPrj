@@ -12,5 +12,5 @@ package com.station.nurse.newtestprj.model;
 public class ParamModel {
     public String Slot;
     public String Total;
-    public String Sum;
+    public String Speed;
 }
