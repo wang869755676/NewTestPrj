@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -181,7 +182,7 @@ public class SuitLines extends View {
     /**
      * 一组数据在可见区域中的最大可见点数，至少>=2
      */
-    private int maxOfVisible = 7;
+    private int maxOfVisible = 5;
     /**
      * 文本之间/图表之间的间距
      */
@@ -702,7 +703,7 @@ public class SuitLines extends View {
         if (!TextUtils.isEmpty(cur.getExtX())) {
             canvas.drawText("x : " + cur.getExtX(), bak.centerX(), bak.centerY() - 12, hintPaint);
         }
-        canvas.drawText("y : " + cur.getValue(), bak.centerX(),
+        canvas.drawText("y : " + cur.getValue()+"ml/h", bak.centerX(),
                 bak.centerY() + 12 + Util.getTextHeight(hintPaint), hintPaint);
         hintPaint.setColor(hintColor);
     }
@@ -1288,6 +1289,7 @@ public class SuitLines extends View {
             datas.put(bakIndex, data);
             colors.put(bakIndex, color);
             curIndex++;
+            Log.e("===",datas.size()+"datas size");
             return this;
         }
 
