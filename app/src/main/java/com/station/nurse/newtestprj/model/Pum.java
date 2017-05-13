@@ -29,7 +29,7 @@ public class Pum {
     private String Remain;
     private String LastTime;
     private String Alarm;
-    private String  AlarmTime;
+    private String AlarmTime;
     private String Rate;
     private String Sn;
 

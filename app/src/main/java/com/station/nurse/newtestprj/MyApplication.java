@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.log.LoggerInterceptor;
 
@@ -19,7 +18,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Context context = getApplicationContext();
+/*        Context context = getApplicationContext();
 // 获取当前包名
         String packageName = context.getPackageName();
 // 获取当前进程名
@@ -28,7 +27,7 @@ public class MyApplication extends Application {
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
         strategy.setUploadProcess(processName == null || processName.equals(packageName));
 // 初始化Bugly
-        CrashReport.initCrashReport(context, "56cc429659", true, strategy);
+        CrashReport.initCrashReport(context, "56cc429659", true, strategy);*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10000L, TimeUnit.MILLISECONDS)
                 .readTimeout(10000L, TimeUnit.MILLISECONDS)

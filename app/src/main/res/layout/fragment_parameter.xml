@@ -3,42 +3,57 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:orientation="vertical">
+    >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="match_parent"
+            android:gravity="center_vertical|right"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="设备号：" />
+            android:text="设备号:" />
 
 
         <com.station.nurse.newtestprj.view.NiceSpinner
+            android:layout_marginLeft="5dp"
             app:textTint="@color/black"
             app:backgroundSelector="@drawable/arc_bg"
             android:id="@+id/param_num"
             android:layout_width="120dp"
             android:layout_height="30dp" />
+
+        <TextView
+            android:gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="" />
+
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="match_parent"
+            android:gravity="center_vertical|right"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="总量：" />
+            android:text="总量:" />
 
         <EditText
+            android:layout_marginLeft="5dp"
             android:inputType="number"
             android:id="@+id/param_total"
             android:layout_width="120dp"
@@ -46,24 +61,28 @@
             android:background="@drawable/arc_bg" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="ml" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="match_parent"
+            android:gravity="center_vertical|right"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="流速：" />
+            android:text="流速:" />
 
         <EditText
+            android:layout_marginLeft="5dp"
             android:inputType="numberDecimal"
             android:id="@+id/param_speed"
             android:layout_width="120dp"
@@ -71,13 +90,15 @@
             android:background="@drawable/arc_bg" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="ml/h" />
     </LinearLayout>
 
     <Button
+        android:layout_gravity="center_horizontal"
         android:background="@android:color/holo_blue_light"
         android:layout_marginTop="20dp"
         android:text="发送"
