@@ -115,7 +115,7 @@ public class SpeedFragment extends Fragment {
                         }
                     }
                 });
-       /* if (dataList == null) {
+        if (dataList == null) {
             dataList = new ArrayList<>();
             dataList.add(new Pum(0, "12.0ml/h"));
             dataList.add(new Pum(1, "8.0ml/h"));
@@ -133,7 +133,7 @@ public class SpeedFragment extends Fragment {
             noZero(dataList);
             adapter.notifyDataSetChanged();
         }
-        init(false);*/
+        init(false);
     }
 
 
