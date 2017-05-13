@@ -24,6 +24,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -132,6 +133,7 @@ public class ParameterFragment extends Fragment {
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
+                        noZero(response);
                         if (response != null) {
                             dataList = response;
                             nums = new ArrayList<String>();
@@ -142,14 +144,7 @@ public class ParameterFragment extends Fragment {
                         }
                     }
                 });
-     /*   nums=new ArrayList<>();
-        nums.add("1号泵");
-        nums.add("2号泵");
-        nums.add("3号泵");
-        nums.add("4号泵");
-        nums.add("5号泵");
-        nums.add("6号泵");
-        paramNum.attachDataSource(nums);*/
+
 
     }
 
@@ -159,4 +154,15 @@ public class ParameterFragment extends Fragment {
         super.onDetach();
         ButterKnife.unbind(this);
     }
+
+    public void noZero(List<Pum> pumList) {
+        Iterator iterator = pumList.iterator();
+        while (iterator.hasNext()) {
+            Pum pum = (Pum) iterator.next();
+            if (pum.getSlot() == 0) {
+                iterator.remove();
+            }
+        }
+    }
+
 }

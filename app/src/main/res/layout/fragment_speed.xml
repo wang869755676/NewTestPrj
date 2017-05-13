@@ -5,20 +5,31 @@
     android:orientation="vertical">
 
     <GridView
-        android:layout_marginTop="50dp"
         android:id="@+id/speed_gv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:numColumns="3"></GridView>
 
-    <tech.linjiang.suitlines.SuitLines
-        android:id="@+id/suitlines"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_below="@+id/speed_gv"
-        android:background="#dfdede"
-        app:lineType="segment"
-        app:needEdgeEffect="false"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speed_gv">
+
+        <tech.linjiang.suitlines.SuitLines
+            android:id="@+id/suitlines"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+
+            android:background="#dfdede"
+            app:lineType="segment"
+            app:needEdgeEffect="false" />
+
+        <com.station.nurse.newtestprj.view.NoTouchView
+            android:id="@+id/speed_notouch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
 
 </RelativeLayout>

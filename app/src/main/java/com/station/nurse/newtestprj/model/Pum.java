@@ -33,6 +33,14 @@ public class Pum {
     private String Rate;
     private String Sn;
 
+    public Pum() {
+    }
+
+    public Pum(int slot, String realSpeed) {
+        Slot = slot;
+        RealSpeed = realSpeed;
+    }
+
     public String getSn() {
         return Sn;
     }

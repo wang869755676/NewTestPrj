@@ -21,6 +21,7 @@ import com.station.nurse.newtestprj.utils.Api;
 import com.station.nurse.newtestprj.utils.ToastUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -83,6 +84,7 @@ public class InfoFragment extends Fragment {
                     @Override
                     public void onResponse(List<Pum> response, int id) {
                         infoSipRefresh.setRefreshing(false);
+                        noZero(response);
                         if (response != null) {
                             if(adapter==null){
                                 dataList = response;
@@ -136,4 +138,15 @@ public class InfoFragment extends Fragment {
             timer.cancel();
         }
     }
+
+    public void noZero(List<Pum> pumList) {
+        Iterator iterator = pumList.iterator();
+        while (iterator.hasNext()) {
+            Pum pum = (Pum) iterator.next();
+            if (pum.getSlot() == 0) {
+                iterator.remove();
+            }
+        }
+    }
+
 }
