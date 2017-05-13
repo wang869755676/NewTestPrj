@@ -21,15 +21,16 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.zhy:okhttputils:2.6.2'
     compile 'com.android.support:design:25.0.0'
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:support-v4:25.0.0'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     compile 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
     testCompile 'junit:junit:4.12'
     compile project(':lib')
-   // compile files('libs/gson-2.2.4.jar')
-    compile 'org.kie.modules:com-google-code-gson:6.5.0.Final'
+    // compile files('libs/gson-2.2.4.jar')
+    //compile 'org.kie.modules:com-google-code-gson:6.5.0.Final'
+    compile 'com.google.code.gson:gson:2.8.0'
 }

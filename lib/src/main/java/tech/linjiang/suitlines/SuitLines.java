@@ -35,7 +35,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -59,6 +58,165 @@ import java.util.Map;
 public class SuitLines extends View {
 
     public static final String TAG = SuitLines.class.getSimpleName();
+    // 曲线、线段
+    public static final int CURVE = 0;
+    public static final int SEGMENT = 1;
+    public static final int SOLID = 0;
+    public static final int DASHED = 1;
+    /**
+     * 判断左/右方向，当在边缘就不触发fling，以优化性能
+     */
+    float orientationX;
+    // 创建自己的Handler，与ViewRootImpl的Handler隔离，方便detach时remove。
+    private Handler handler = new Handler(Looper.getMainLooper());
+    // 遍历线上点的动画插值器
+    private TimeInterpolator linearInterpolator = new LinearInterpolator();
+    // 每个数据点的动画插值
+    private TimeInterpolator pointInterpolator = new OvershootInterpolator(3);
+    private RectF linesArea, xArea, yArea, hintArea;
+    /**
+     * 默认画笔
+     */
+    private Paint basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    /**
+     * x，y轴对应的画笔
+     */
+    private Paint xyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    /**
+     * 点击提示的画笔
+     */
+    private Paint hintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    /**
+     * 默认画笔的颜色，索引0位置为画笔颜色，整个数组为shader颜色
+     */
+    private int[] defaultLineColor = {Color.RED, 0xFFF35E54, Color.YELLOW};
+    private int hintColor = Color.RED;
+    /**
+     * xy轴文字颜色和大小
+     */
+    private int defaultXyColor = Color.GRAY;
+    private float defaultXySize = 8;
+    /**
+     * 每根画笔对应一条线
+     */
+    private List<Paint> paints = new ArrayList<>();
+    private List<Path> paths = new ArrayList<>();
+    /**
+     * 约定：如果需要实现多组数据，那么每组数据的长度必须相同！
+     * 多组数据的数据池；
+     * Key：一组数据的唯一标识,注意：要求连续且从0开始
+     * value：一组数据
+     */
+    private Map<Integer, List<Unit>> datas = new HashMap<>();
+    private Unit current;
+    private Unit lastUnit;
+    /**
+     * 所有数据集的动画
+     */
+    private List<ValueAnimator> animators = new ArrayList<>();
+    /**
+     * line的点击效果
+     */
+    private ValueAnimator clickHintAnimator;
+    /**
+     * 当前正在动画的那组数据
+     */
+    private int curAnimLine;
+    /**
+     * 整体动画的起始时间
+     */
+    private long startTimeOfAnim;
+    /**
+     * 是否正在整体动画中
+     */
+    private boolean isAniming;
+    /**
+     * 两个点之间的动画启动间隔，大于0时仅当总数据点<可见点数时有效
+     */
+    private long intervalOfAnimCost = 100;
+    /**
+     * 可见区域中，将一组数据遍历完总共花费的最大时间
+     */
+    private long maxOfAnimCost = 1000;
+    /**
+     * 一组数据在可见区域中的最大可见点数，至少>=2
+     */
+    private int maxOfVisible = 30;
+    /**
+     * 文本之间/图表之间的间距
+     */
+    private int basePadding = 4;
+    /**
+     * y轴刻度数，至少>=1
+     */
+    private int countOfY = 5;
+    /**
+     * y轴的缓存，提高移动效率
+     */
+    private Bitmap yAreaBuffer;
+    /**
+     * y轴的最大刻度值，保留一位小数
+     */
+    private float maxValueOfY;
+    /**
+     * 根据可见点数计算出的两点之间的距离
+     */
+    private float realBetween;
+    /**
+     * 手指/fling的上次位置
+     */
+    private float lastX;
+    /**
+     * 滚动当前偏移量
+     */
+    private float offset;
+    /**
+     * 滚动上一次的偏移量
+     */
+    private float lastOffset;
+    /**
+     * 滚动偏移量的边界
+     */
+    private float maxOffset;
+    /**
+     * fling最大速度
+     */
+    private int maxVelocity;
+    // 点击y的误差
+    private int clickSlop;
+    private VelocityTracker velocityTracker;
+    private Scroller scroller;
+
+    private EdgeEffect edgeEffectLeft, edgeEffectRight;
+    // 对于fling，仅吸收到达边缘时的速度
+    private boolean hasAbsorbLeft, hasAbsorbRight;
+    /**
+     * 是否需要边缘反馈效果
+     */
+    private boolean needEdgeEffect = true;
+    private int edgeEffectColor = Color.GRAY;
+    /**
+     * 点击是否弹出额外信息
+     */
+    private boolean needShowHint = true;
+    /**
+     * 实际的点击位置，0为x索引，1为某条line
+     */
+    private int[] clickIndexs;
+    private float firstX, firstY;
+    /**
+     * 控制是否强制重新生成path，当改变lineType/paint时需要
+     */
+    private boolean forceToDraw;
+
+    /**
+     * lines在当前可见区域的边缘点
+     */
+    private int[] suitEdge;
+    private int lineType = CURVE;
+    private int lineStyle = SOLID;
+    // 每个1/x启动下一条line的动画
+    private int percentOfStartNextLineAnim = 3;
 
     public SuitLines(Context context) {
         this(context, null);
@@ -108,174 +266,11 @@ public class SuitLines extends View {
         ta.recycle();
     }
 
-
-    // 创建自己的Handler，与ViewRootImpl的Handler隔离，方便detach时remove。
-    private Handler handler = new Handler(Looper.getMainLooper());
-    // 遍历线上点的动画插值器
-    private TimeInterpolator linearInterpolator = new LinearInterpolator();
-    // 每个数据点的动画插值
-    private TimeInterpolator pointInterpolator = new OvershootInterpolator(3);
-    private RectF linesArea, xArea, yArea, hintArea;
-    /**
-     * 默认画笔
-     */
-    private Paint basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    /**
-     * x，y轴对应的画笔
-     */
-    private Paint xyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    /**
-     * 点击提示的画笔
-     */
-    private Paint hintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    /**
-     * 默认画笔的颜色，索引0位置为画笔颜色，整个数组为shader颜色
-     */
-    private int[] defaultLineColor = {Color.RED, 0xFFF35E54, Color.YELLOW};
-    private int hintColor = Color.RED;
-    /**
-     * xy轴文字颜色和大小
-     */
-    private int defaultXyColor = Color.GRAY;
-    private float defaultXySize = 8;
-    /**
-     * 每根画笔对应一条线
-     */
-    private List<Paint> paints = new ArrayList<>();
-    private List<Path> paths = new ArrayList<>();
-    /**
-     * 约定：如果需要实现多组数据，那么每组数据的长度必须相同！
-     * 多组数据的数据池；
-     * Key：一组数据的唯一标识,注意：要求连续且从0开始
-     * value：一组数据
-     */
-    private Map<Integer, List<Unit>> datas = new HashMap<>();
-
-    /**
-     * 所有数据集的动画
-     */
-    private List<ValueAnimator> animators = new ArrayList<>();
-    /**
-     * line的点击效果
-     */
-    private ValueAnimator clickHintAnimator;
-    /**
-     * 当前正在动画的那组数据
-     */
-    private int curAnimLine;
-    /**
-     * 整体动画的起始时间
-     */
-    private long startTimeOfAnim;
-    /**
-     * 是否正在整体动画中
-     */
-    private boolean isAniming;
-    /**
-     * 两个点之间的动画启动间隔，大于0时仅当总数据点<可见点数时有效
-     */
-    private long intervalOfAnimCost = 100;
-    /**
-     * 可见区域中，将一组数据遍历完总共花费的最大时间
-     */
-    private long maxOfAnimCost = 1000;
-    /**
-     * 一组数据在可见区域中的最大可见点数，至少>=2
-     */
-    private int maxOfVisible = 5;
-    /**
-     * 文本之间/图表之间的间距
-     */
-    private int basePadding = 4;
-    /**
-     * y轴刻度数，至少>=1
-     */
-    private int countOfY = 5;
-
-    /**
-     * y轴的缓存，提高移动效率
-     */
-    private Bitmap yAreaBuffer;
-
-    /**
-     * y轴的最大刻度值，保留一位小数
-     */
-    private float maxValueOfY;
-
-    /**
-     * 根据可见点数计算出的两点之间的距离
-     */
-    private float realBetween;
-    /**
-     * 手指/fling的上次位置
-     */
-    private float lastX;
-    /**
-     * 滚动当前偏移量
-     */
-    private float offset;
-    /**
-     * 滚动上一次的偏移量
-     */
-    private float lastOffset;
-    /**
-     * 滚动偏移量的边界
-     */
-    private float maxOffset;
-    /**
-     * fling最大速度
-     */
-    private int maxVelocity;
-    // 点击y的误差
-    private int clickSlop;
-    /**
-     * 判断左/右方向，当在边缘就不触发fling，以优化性能
-     */
-    float orientationX;
-    private VelocityTracker velocityTracker;
-    private Scroller scroller;
-
-    private EdgeEffect edgeEffectLeft, edgeEffectRight;
-    // 对于fling，仅吸收到达边缘时的速度
-    private boolean hasAbsorbLeft, hasAbsorbRight;
-    /**
-     * 是否需要边缘反馈效果
-     */
-    private boolean needEdgeEffect = true;
-    private int edgeEffectColor = Color.GRAY;
-    /**
-     * 点击是否弹出额外信息
-     */
-    private boolean needShowHint = true;
-    /**
-     * 实际的点击位置，0为x索引，1为某条line
-     */
-    private int[] clickIndexs;
-    private float firstX, firstY;
-    /**
-     * 控制是否强制重新生成path，当改变lineType/paint时需要
-     */
-    private boolean forceToDraw;
-
-    /**
-     * lines在当前可见区域的边缘点
-     */
-    private int[] suitEdge;
-
-    // 曲线、线段
-    public static final int CURVE = 0;
-    public static final int SEGMENT = 1;
-    private int lineType = CURVE;
-    public static final int SOLID = 0;
-    public static final int DASHED = 1;
-    private int lineStyle = SOLID;
-
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         calcAreas();
-       // basePaint.setShader(buildPaintColor(defaultLineColor));
+        // basePaint.setShader(buildPaintColor(defaultLineColor));
         if (!datas.isEmpty()) {
             calcUnitXY();
         }
@@ -352,7 +347,6 @@ public class SuitLines extends View {
         return super.onTouchEvent(event);
     }
 
-
     @Override
     public void computeScroll() {
         if (scroller.computeScrollOffset()) {
@@ -373,7 +367,6 @@ public class SuitLines extends View {
             hasAbsorbRight = false;
         }
     }
-
 
     @Override
     public void draw(Canvas canvas) {
@@ -403,7 +396,6 @@ public class SuitLines extends View {
         }
     }
 
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -411,7 +403,7 @@ public class SuitLines extends View {
         if (datas.isEmpty()) return;
         // lines
         canvas.save();
-        canvas.clipRect(linesArea.left, linesArea.top, linesArea.right, linesArea.bottom+xArea.height());
+        canvas.clipRect(linesArea.left, linesArea.top, linesArea.right, linesArea.bottom + xArea.height());
         canvas.translate(offset, 0);
         // 当滑动到边缘 或 上次与本次结果相同 或 不需要计算边缘点 的时候就不再计算，直接draw已有的path
         if (!paths.isEmpty() && !forceToDraw && !isAniming && (lastOffset == offset || noNeedCalcEdge(offset))) {
@@ -427,8 +419,8 @@ public class SuitLines extends View {
             drawLines(canvas, suitEdge[0], suitEdge[1]);
         }
         // x 蓝色会稍增加
-        if(suitEdge==null)
-            suitEdge=findSuitEdgeInVisual2();
+        if (suitEdge == null)
+            suitEdge = findSuitEdgeInVisual2();
         drawX(canvas, suitEdge[0], suitEdge[1]);
         drawLines(canvas, suitEdge[0], suitEdge[1]);
         if (lastOffset != offset) {
@@ -444,6 +436,7 @@ public class SuitLines extends View {
     /**
      * 边缘点在可见区域两侧时不需要重新计算<br>
      * 但是手指滑动越快，该分支的有效效果越差
+     *
      * @param offset
      * @return
      */
@@ -464,11 +457,10 @@ public class SuitLines extends View {
         invalidate();
     }
 
-
     private void onTap(float upX, float upY) {
         upX -= offset;
         RectF bak = new RectF(linesArea);
-        bak.offset(-offset,0);
+        bak.offset(-offset, 0);
         if (datas.isEmpty() || !bak.contains(upX, upY)) {
             return;
         }
@@ -619,6 +611,7 @@ public class SuitLines extends View {
      * 得到： (int)x = (y-b) / a
      * 由于 y = b - offset
      * 所以：(int)x = |offset| / a
+     *
      * @return
      */
     private int[] findSuitEdgeInVisual2() {
@@ -639,6 +632,7 @@ public class SuitLines extends View {
     /**
      * 开始连接每条线的各个点<br>
      * 最耗费性能的地方：canvas.drawPath
+     *
      * @param canvas
      * @param startIndex
      * @param endIndex
@@ -647,39 +641,49 @@ public class SuitLines extends View {
         for (int i = 0; i < paths.size(); i++) {
             paths.get(i).reset();
         }
-        Log.e("===","ddddddddd"+endIndex);
-        if(endIndex==0){
-
+        if (endIndex == 0) {
             for (int j = 0; j < datas.size(); j++) {
                 Unit current = datas.get(j).get(0);
                 float curY = linesArea.bottom - (linesArea.bottom - current.getXY().y) * current.getPercent();
-                 canvas.drawCircle(xArea.left,curY,2,paints.get(j));
+                canvas.drawCircle(xArea.left, curY, 2, paints.get(j));
             }
-        }else{
+        } else {
             for (int i = startIndex; i <= endIndex; i++) {
                 for (int j = 0; j < datas.size(); j++) {
-                    Unit current = datas.get(j).get(i);
-                    float curY = linesArea.bottom - (linesArea.bottom - current.getXY().y) * current.getPercent();
-                    if (i == startIndex) {
-                        paths.get(j).moveTo(current.getXY().x, curY);
-                        continue;
+                    if (i < datas.get(j).size()) {
+                        current = datas.get(j).get(i);
+                        if (i != 0) {
+                            lastUnit = datas.get(j).get(i - 1);
+                        }
+                        float curY = linesArea.bottom - (linesArea.bottom - current.getXY().y) * current.getPercent();
+                        if (i == startIndex) {
+                            paths.get(j).moveTo(current.getXY().x, curY);
+                            continue;
+                        }
+                        if (lineType == SEGMENT) {
+                            if (lastUnit != null) {
+                                paths.get(j).lineTo(current.getXY().x, lastUnit.getXY().y);
+                                paths.get(j).lineTo(current.getXY().x, curY);
+                            } else {
+                                paths.get(j).lineTo(current.getXY().x, curY);
+                            }
+
+                        } else if (lineType == CURVE) {
+                            // 到这里肯定不是起始点，所以可以减1
+                            Unit previous = datas.get(j).get(i - 1);
+                            // 两个锚点的坐标x为中点的x，y分别是两个连接点的y
+                            paths.get(j).cubicTo((previous.getXY().x + current.getXY().x) / 2,
+                                    linesArea.bottom - (linesArea.bottom - previous.getXY().y) * previous.getPercent(),
+                                    (previous.getXY().x + current.getXY().x) / 2, curY,
+                                    current.getXY().x, curY);
+                        }
+                        if (isLineFill() && i == endIndex) {
+                            paths.get(j).lineTo(current.getXY().x, linesArea.bottom);
+                            paths.get(j).lineTo(datas.get(j).get(startIndex).getXY().x, linesArea.bottom);
+                            paths.get(j).close();
+                        }
                     }
-                    if (lineType == SEGMENT) {
-                        paths.get(j).lineTo(current.getXY().x, curY);
-                    } else if (lineType == CURVE) {
-                        // 到这里肯定不是起始点，所以可以减1
-                        Unit previous = datas.get(j).get(i - 1);
-                        // 两个锚点的坐标x为中点的x，y分别是两个连接点的y
-                        paths.get(j).cubicTo((previous.getXY().x + current.getXY().x) / 2,
-                                linesArea.bottom - (linesArea.bottom - previous.getXY().y) * previous.getPercent(),
-                                (previous.getXY().x + current.getXY().x) / 2, curY,
-                                current.getXY().x, curY);
-                    }
-                    if (isLineFill() && i == endIndex) {
-                        paths.get(j).lineTo(current.getXY().x, linesArea.bottom);
-                        paths.get(j).lineTo(datas.get(j).get(startIndex).getXY().x, linesArea.bottom);
-                        paths.get(j).close();
-                    }
+
                 }
             }
             drawExsitDirectly(canvas);
@@ -689,6 +693,7 @@ public class SuitLines extends View {
 
     /**
      * 直接draw现成的
+     *
      * @param canvas
      */
     private void drawExsitDirectly(Canvas canvas) {
@@ -701,14 +706,15 @@ public class SuitLines extends View {
 
     /**
      * 画提示文本和辅助线
+     *
      * @param canvas
      */
     private void drawClickHint(Canvas canvas) {
         Unit cur = datas.get(clickIndexs[1]).get(clickIndexs[0]);
-        canvas.drawLine(datas.get(clickIndexs[1]).get(suitEdge[0]).getXY().x,cur.getXY().y,
-                datas.get(clickIndexs[1]).get(suitEdge[1]).getXY().x,cur.getXY().y, hintPaint);
-        canvas.drawLine(cur.getXY().x,linesArea.bottom,
-                cur.getXY().x,linesArea.top, hintPaint);
+        canvas.drawLine(datas.get(clickIndexs[1]).get(suitEdge[0]).getXY().x, cur.getXY().y,
+                datas.get(clickIndexs[1]).get(suitEdge[1]).getXY().x, cur.getXY().y, hintPaint);
+        canvas.drawLine(cur.getXY().x, linesArea.bottom,
+                cur.getXY().x, linesArea.top, hintPaint);
         RectF bak = new RectF(hintArea);
         bak.offset(-offset, 0);
         hintPaint.setAlpha(100);
@@ -718,51 +724,57 @@ public class SuitLines extends View {
         if (!TextUtils.isEmpty(cur.getExtX())) {
             canvas.drawText("x : " + cur.getExtX(), bak.centerX(), bak.centerY() - 12, hintPaint);
         }
-        canvas.drawText("y : " + cur.getValue()+"ml/h", bak.centerX(),
+        canvas.drawText("y : " + cur.getValue() + "ml/h", bak.centerX(),
                 bak.centerY() + 12 + Util.getTextHeight(hintPaint), hintPaint);
         hintPaint.setColor(hintColor);
     }
 
     /**
      * 画x轴,默认取第一条线的值
+     *
      * @param canvas
      * @param startIndex
      * @param endIndex
      */
     private void drawX(Canvas canvas, int startIndex, int endIndex) {
-        if(endIndex==0){
+        if (endIndex == 0) {
             canvas.drawLine(xArea.left, xArea.top,
                     xArea.right, xArea.top, xyPaint);
-        }else{
-            canvas.drawLine(datas.get(0).get(startIndex).getXY().x, xArea.top,
-                    datas.get(0).get(endIndex).getXY().x, xArea.top, xyPaint);
-        }
-
-        for (int i = startIndex; i <= endIndex; i++) {
-            String extX = datas.get(0).get(i).getExtX();
-            if (TextUtils.isEmpty(extX)) {
-                continue;
-            }
-            if (i == startIndex && startIndex == 0) {
-                xyPaint.setTextAlign(Paint.Align.LEFT);
-            } else if (i == endIndex && endIndex == datas.get(0).size()-1) {
-                xyPaint.setTextAlign(Paint.Align.RIGHT);
-            } else {
-                xyPaint.setTextAlign(Paint.Align.CENTER);
-            }
-            if(endIndex==0){
-                canvas.drawText(extX,xArea.left, Util.calcTextSuitBaseY(xArea, xyPaint), xyPaint);
-            }else{
-                canvas.drawText(extX, datas.get(0).get(i).getXY().x, Util.calcTextSuitBaseY(xArea, xyPaint), xyPaint);
+        } else {
+            if (endIndex < datas.get(0).size()) {
+                canvas.drawLine(datas.get(0).get(startIndex).getXY().x, xArea.top,
+                        datas.get(0).get(endIndex).getXY().x, xArea.top, xyPaint);
             }
 
         }
+        if (endIndex < datas.get(0).size()) {
+            for (int i = startIndex; i <= endIndex; i++) {
+                String extX = datas.get(0).get(i).getExtX();
+                if (TextUtils.isEmpty(extX)) {
+                    continue;
+                }
+                if (i == startIndex && startIndex == 0) {
+                    xyPaint.setTextAlign(Paint.Align.LEFT);
+                } else if (i == endIndex && endIndex == datas.get(0).size() - 1) {
+                    xyPaint.setTextAlign(Paint.Align.RIGHT);
+                } else {
+                    xyPaint.setTextAlign(Paint.Align.CENTER);
+                }
+                if (endIndex == 0) {
+                    canvas.drawText(extX, xArea.left, Util.calcTextSuitBaseY(xArea, xyPaint), xyPaint);
+                } else {
+                    canvas.drawText(extX, datas.get(0).get(i).getXY().x, Util.calcTextSuitBaseY(xArea, xyPaint), xyPaint);
+                }
+
+            }
+        }
+
+
     }
-
 
     private void drawY(Canvas canvas) {
         if (yAreaBuffer == null) {
-            yAreaBuffer = Bitmap.createBitmap((int)yArea.width(), (int)yArea.height(), Bitmap.Config.ARGB_8888);
+            yAreaBuffer = Bitmap.createBitmap((int) yArea.width(), (int) yArea.height(), Bitmap.Config.ARGB_8888);
             Rect yRect = new Rect(0, 0, yAreaBuffer.getWidth(), yAreaBuffer.getHeight());
             Canvas yCanvas = new Canvas(yAreaBuffer);
             yCanvas.drawLine(yRect.right, yRect.bottom, yRect.right, yRect.top, xyPaint);
@@ -778,18 +790,17 @@ public class SuitLines extends View {
                     y = yRect.top + Util.getTextHeight(xyPaint) + 3;
                 } else {
                     extY = maxValueOfY / (countOfY - 1) * i;
-                    y = yRect.bottom - yRect.height() / (countOfY - 1) * i + Util.getTextHeight(xyPaint)/2;
+                    y = yRect.bottom - yRect.height() / (countOfY - 1) * i + Util.getTextHeight(xyPaint) / 2;
                 }
                 yCanvas.drawText(new DecimalFormat("##.#").format(extY), yRect.right - basePadding, y, xyPaint);
             }
         }
-        canvas.drawBitmap(yAreaBuffer,yArea.left,yArea.top,null);
+        canvas.drawBitmap(yAreaBuffer, yArea.left, yArea.top, null);
 
 
     }
 
     /**
-     *
      * @param color 不能为null
      * @return
      */
@@ -814,7 +825,6 @@ public class SuitLines extends View {
         paint.set(basePaint);
         return paint;
     }
-
 
     private void feedInternal(Map<Integer, List<Unit>> entry, List<Paint> entryPaints, boolean needAnim) {
         cancelAllAnims();
@@ -849,6 +859,7 @@ public class SuitLines extends View {
 
     /**
      * 得到maxValueOfY
+     *
      * @param datas
      */
     private void calcMaxUnit(Map<Integer, List<Unit>> datas) {
@@ -882,9 +893,9 @@ public class SuitLines extends View {
                 validArea.left + xyPaint.measureText(baseY) + basePadding,
                 validArea.bottom - Util.getTextHeight(xyPaint) - basePadding * 2);
         xArea = new RectF(yArea.right, yArea.bottom, validArea.right, validArea.bottom);
-        linesArea = new RectF(yArea.right+1, yArea.top, xArea.right, yArea.bottom);
-        hintArea = new RectF(linesArea.right-linesArea.right/4,linesArea.top,
-                linesArea.right,linesArea.top + linesArea.height()/4);
+        linesArea = new RectF(yArea.right + 1, yArea.top, xArea.right, yArea.bottom);
+        hintArea = new RectF(linesArea.right - linesArea.right / 4, linesArea.top,
+                linesArea.right, linesArea.top + linesArea.height() / 4);
     }
 
     /**
@@ -941,8 +952,6 @@ public class SuitLines extends View {
         invalidate();
     }
 
-    // 每个1/x启动下一条line的动画
-    private int percentOfStartNextLineAnim = 3;
     /**
      * 约定每间隔一组数据遍历总时间的一半就启动下一组数据的遍历
      *
@@ -1079,13 +1088,14 @@ public class SuitLines extends View {
 
     /**
      * 设置默认一条line时的颜色
-     * @param colors    默认为defaultLineColor
+     *
+     * @param colors 默认为defaultLineColor
      */
-    public void setDefaultOneLineColor(int...colors) {
+    public void setDefaultOneLineColor(int... colors) {
         if (colors == null || colors.length < 1) return;
         defaultLineColor = colors;
         basePaint.setColor(colors[0]);
-       // basePaint.setShader(buildPaintColor(colors));
+        // basePaint.setShader(buildPaintColor(colors));
         if (!datas.isEmpty() && datas.size() == 1) {
             paints.get(0).set(basePaint);
             postInvalidate();
@@ -1094,6 +1104,7 @@ public class SuitLines extends View {
 
     /**
      * 设置提示辅助线、文字颜色
+     *
      * @param hintColor
      */
     public void setHintColor(int hintColor) {
@@ -1109,6 +1120,7 @@ public class SuitLines extends View {
 
     /**
      * 设置xy轴文字的颜色
+     *
      * @param color 默认为Color.GRAY
      */
     public void setXyColor(int color) {
@@ -1123,6 +1135,7 @@ public class SuitLines extends View {
 
     /**
      * 设置xy轴文字大小
+     *
      * @param sp
      */
     public void setXySize(float sp) {
@@ -1141,6 +1154,7 @@ public class SuitLines extends View {
 
     /**
      * 设置line的SEGMENT时的大小
+     *
      * @param lineSize
      */
     public void setLineSize(float lineSize) {
@@ -1155,9 +1169,14 @@ public class SuitLines extends View {
         postInvalidate();
     }
 
+    public int getLineType() {
+        return lineType;
+    }
+
     /**
      * 指定line类型：CURVE / SEGMENT
-     * @param lineType  默认CURVE
+     *
+     * @param lineType 默认CURVE
      */
     public void setLineType(int lineType) {
         this.lineType = lineType;
@@ -1165,13 +1184,10 @@ public class SuitLines extends View {
         postInvalidate();
     }
 
-    public int getLineType() {
-        return lineType;
-    }
-
     /**
      * 设置line的形态：是否填充
-     * @param isFill    默认为false
+     *
+     * @param isFill 默认为false
      */
     public void setLineForm(boolean isFill) {
         if (isFill) {
@@ -1195,7 +1211,7 @@ public class SuitLines extends View {
 
     public void setLineStyle(int style) {
         lineStyle = style;
-        basePaint.setPathEffect(lineStyle == DASHED ? new DashPathEffect(new float[]{Util.dip2px(3),Util.dip2px(6)},0) : null);
+        basePaint.setPathEffect(lineStyle == DASHED ? new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0) : null);
         if (!datas.isEmpty()) {
             // 同时更新当前已存在的paint
             for (int i = 0; i < paints.size(); i++) {
@@ -1227,6 +1243,7 @@ public class SuitLines extends View {
 
     /**
      * 指定边缘效果的颜色
+     *
      * @param color 默认为Color.GRAY
      */
     public void setEdgeEffectColor(int color) {
@@ -1303,6 +1320,7 @@ public class SuitLines extends View {
 
         /**
          * 该方式是用于构建多条line，单条line可使用lineGraph#feed
+         *
          * @param data  单条line的数据集合
          * @param color 指定当前line的颜色。默认取数组的第一个颜色；另外如果开启了填充，则整个数组颜色作为填充色的渐变。
          * @return
@@ -1320,6 +1338,7 @@ public class SuitLines extends View {
 
         /**
          * 调用该方法开始填充数据
+         *
          * @param suitLines 需要被填充的图表
          * @param needAnim  是否需要动画
          */
