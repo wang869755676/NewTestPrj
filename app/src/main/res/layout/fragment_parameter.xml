@@ -99,7 +99,7 @@
 
     <Button
         android:layout_gravity="center_horizontal"
-        android:background="@android:color/holo_blue_light"
+        android:background="@android:color/holo_blue_bright"
         android:layout_marginTop="20dp"
         android:text="发送"
         android:layout_width="130dp"

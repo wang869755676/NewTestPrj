@@ -21,6 +21,7 @@ import com.station.nurse.newtestprj.utils.Api;
 import com.station.nurse.newtestprj.utils.ToastUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
@@ -103,6 +104,29 @@ public class InfoFragment extends Fragment {
                 });
 
 
+            if(adapter==null){
+                dataList = new ArrayList<>();
+                dataList.add(new Pum(0));
+                dataList.add(new Pum(1));
+                dataList.add(new Pum(2));
+                dataList.add(new Pum(3));
+                dataList.add(new Pum(4));
+                adapter=new InfoRecyclerAdapter(dataList, getActivity());
+                infoRv.setAdapter(adapter);
+            }else{
+                dataList.clear();
+
+                dataList.add(new Pum(1));
+                dataList.add(new Pum(0));
+                dataList.add(new Pum(2));
+                dataList.add(new Pum(4));
+                dataList.add(new Pum(3));
+                adapter.notifyDataSetChanged();
+            }
+
+
+
+
 
     }
 
@@ -119,7 +143,7 @@ public class InfoFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-               getData();
+               //getData();
             }
         }, 0, 1000);
     }

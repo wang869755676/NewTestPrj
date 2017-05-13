@@ -1,10 +1,14 @@
 package com.station.nurse.newtestprj.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.annotation.ColorRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.station.nurse.newtestprj.R;
@@ -17,15 +21,17 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
 
     private List<Pum> dataList;
     private Context context;
+    private Animation animation;
 
     public InfoRecyclerAdapter(List<Pum> dataList, Context context) {
         this.dataList = dataList;
         this.context = context;
+        animation= AnimationUtils.loadAnimation(context,R.anim.twinkle);
     }
 
     @Override
     public InfoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_info, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_info, parent,false);
 
         return new InfoViewHolder(view);
     }
@@ -58,6 +64,10 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
         private TextView itemAlarm;
         private TextView itemAlarmTime;
 
+        private View itemTwinkle;
+        private TextView itemStat;
+
+        // （运行状态的泵用绿色闪动，停止的状态用绿色不闪动，低级告警橘黄闪动，高级告警红色闪动）
         public InfoViewHolder(View itemView) {
             super(itemView);
             itemName = (TextView) itemView.findViewById(R.id.item_info_name);
@@ -69,12 +79,14 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
             itemSerNum = (TextView) itemView.findViewById(R.id.item_info_serNum);
             itemNum = (TextView) itemView.findViewById(R.id.item_info_sn);
 
-          itemType= (TextView) itemView.findViewById(R.id.item_info_type);
-            itemModel= (TextView) itemView.findViewById(R.id.item_info_model);
-            itemState= (TextView) itemView.findViewById(R.id.item_info_statue);
-            itemRate= (TextView) itemView.findViewById(R.id.item_info_rate);
-            itemAlarm= (TextView) itemView.findViewById(R.id.item_info_alarm);
-            itemAlarmTime= (TextView) itemView.findViewById(R.id.item_info_alarmTime);
+            itemType = (TextView) itemView.findViewById(R.id.item_info_type);
+            itemModel = (TextView) itemView.findViewById(R.id.item_info_model);
+            itemState = (TextView) itemView.findViewById(R.id.item_info_statue);
+            itemRate = (TextView) itemView.findViewById(R.id.item_info_rate);
+            itemAlarm = (TextView) itemView.findViewById(R.id.item_info_alarm);
+            itemAlarmTime = (TextView) itemView.findViewById(R.id.item_info_alarmTime);
+            itemTwinkle = itemView.findViewById(R.id.view_Twinkle);
+            itemStat = (TextView) itemView.findViewById(R.id.item_info_state);
         }
 
         public void bindData(Pum pum) {
@@ -91,7 +103,38 @@ public class InfoRecyclerAdapter extends RecyclerView.Adapter<InfoRecyclerAdapte
             itemRate.setText("输液进度: " + pum.getRate());
             itemAlarm.setText("告警事件: " + pum.getAlarm());
             itemAlarmTime.setText("告警时间: " + pum.getAlarmTime());
-            itemType.setText("设备类型:"+pum.getType()+"  ");
+            itemType.setText("设备类型:" + pum.getType() + "  ");
+            switch (pum.getStatus()){
+                case 0:
+                    itemTwinkle.clearAnimation();
+                    itemTwinkle.setBackgroundColor(Color.GRAY);
+                    itemStat.setText("断开连接");
+                    break;
+                case 1:
+                    itemTwinkle.clearAnimation();
+                    itemTwinkle.setBackgroundColor(Color.GREEN);
+                    itemStat.setText("停止");
+                    break;
+                case 2:
+                    itemTwinkle.clearAnimation();
+                    itemTwinkle.setAnimation(animation);
+                    itemTwinkle.setBackgroundColor(Color.GREEN);
+                    itemStat.setText("运行");
+                    break;
+
+                case 3:
+                    itemTwinkle.clearAnimation();
+                    itemTwinkle.setAnimation(animation);
+                    itemTwinkle.setBackgroundColor(Color.YELLOW);
+                    itemStat.setText("中级警报");
+                    break;
+                case 4:
+                    itemTwinkle.clearAnimation();
+                    itemTwinkle.setAnimation(animation);
+                    itemTwinkle.setBackgroundColor(Color.RED);
+                    itemStat.setText("高级警报");
+                    break;
+            }
         }
     }
 }

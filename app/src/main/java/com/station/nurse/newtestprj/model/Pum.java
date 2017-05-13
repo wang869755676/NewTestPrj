@@ -32,13 +32,26 @@ public class Pum {
     private String AlarmTime;
     private String Rate;
     private String Sn;
+    private int Status; //Status，当某个泵处于断开链接状态是，=0，运行状态时=2，停止状态=1，中级报警=3，高级报警=4
 
     public Pum() {
+    }
+
+    public Pum(int status) {
+        Status = status;
     }
 
     public Pum(int slot, String realSpeed) {
         Slot = slot;
         RealSpeed = realSpeed;
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int status) {
+        Status = status;
     }
 
     public String getSn() {

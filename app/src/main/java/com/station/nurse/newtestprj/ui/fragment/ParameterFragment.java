@@ -1,6 +1,7 @@
 package com.station.nurse.newtestprj.ui.fragment;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -67,6 +68,13 @@ public class ParameterFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 currentPosition = position;
+                if(dataList.get(position).getStatus()!=1){
+                    paramSend.setBackgroundColor(Color.GRAY);
+                    paramSend.setEnabled(false);
+                }else{
+                    paramSend.setBackgroundColor(Color.BLUE);
+                    paramSend.setEnabled(true);
+                }
             }
 
             @Override
