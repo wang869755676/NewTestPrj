@@ -25,11 +25,19 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <View
-                android:id="@+id/view_Twinkle"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:background="@android:color/holo_red_dark"></View>
+            <FrameLayout
+                android:padding="1dp"
+                android:background="@drawable/border_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/view_Twinkle"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@android:color/holo_red_dark"></View>
+            </FrameLayout>
+
+
 
             <TextView
                 android:id="@+id/item_info_state"

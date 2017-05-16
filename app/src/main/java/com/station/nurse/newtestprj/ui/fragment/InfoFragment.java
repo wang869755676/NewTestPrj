@@ -22,6 +22,7 @@ import com.station.nurse.newtestprj.utils.ToastUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
@@ -84,6 +85,7 @@ public class InfoFragment extends Fragment {
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
+                        Collections.sort(response);
                         infoSipRefresh.setRefreshing(false);
                         noZero(response);
                         if (response != null) {
@@ -104,7 +106,7 @@ public class InfoFragment extends Fragment {
                 });
 
 
-            if(adapter==null){
+          /*  if(adapter==null){
                 dataList = new ArrayList<>();
                 dataList.add(new Pum(0));
                 dataList.add(new Pum(1));
@@ -122,7 +124,7 @@ public class InfoFragment extends Fragment {
                 dataList.add(new Pum(4));
                 dataList.add(new Pum(3));
                 adapter.notifyDataSetChanged();
-            }
+            }*/
 
 
 
@@ -143,7 +145,7 @@ public class InfoFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-               //getData();
+               getData();
             }
         }, 0, 1000);
     }

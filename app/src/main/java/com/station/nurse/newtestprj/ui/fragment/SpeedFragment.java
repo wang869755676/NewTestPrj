@@ -25,6 +25,7 @@ import com.station.nurse.newtestprj.view.NoTouchView;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -96,7 +97,7 @@ public class SpeedFragment extends Fragment {
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
-                        Log.e("===", response.size() + "------------");
+                        Collections.sort(response);
                         if (response != null) {
                             noZero(response);
                             if (dataList == null) {
@@ -115,7 +116,7 @@ public class SpeedFragment extends Fragment {
                         }
                     }
                 });
-        if (dataList == null) {
+       /* if (dataList == null) {
             dataList = new ArrayList<>();
             dataList.add(new Pum(0, "12.0ml/h"));
             dataList.add(new Pum(1, "8.0ml/h"));
@@ -133,7 +134,7 @@ public class SpeedFragment extends Fragment {
             noZero(dataList);
             adapter.notifyDataSetChanged();
         }
-        init(false);
+        init(false);*/
     }
 
 

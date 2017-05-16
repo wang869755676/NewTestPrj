@@ -99,9 +99,10 @@
 
     <Button
         android:layout_gravity="center_horizontal"
-        android:background="@android:color/holo_blue_bright"
+        android:background="@color/blue"
         android:layout_marginTop="20dp"
         android:text="发送"
+        android:textColor="@android:color/white"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:id="@+id/param_send" />

@@ -25,8 +25,11 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,15 +54,21 @@ public class ParameterFragment extends Fragment {
     private ParamModel paramModel;
     private List<ParamModel> models;
     private int currentPosition = 0;
-
+    private Timer timer;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_parameter, container, false);
         ButterKnife.bind(this, view);
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                initData();
+            }
+        }, 0, 1000);
         initListner();
-        initData();
         return view;
     }
 
@@ -141,6 +150,7 @@ public class ParameterFragment extends Fragment {
 
                     @Override
                     public void onResponse(List<Pum> response, int id) {
+                        Collections.sort(response);
                         noZero(response);
                         if (response != null) {
                             dataList = response;
@@ -149,6 +159,7 @@ public class ParameterFragment extends Fragment {
                                 nums.add(pum.getSlot() + "号泵");
                             }
                             paramNum.attachDataSource(nums);
+                            paramNum.setSelectedIndex(currentPosition);
                         }
                     }
                 });
@@ -161,6 +172,13 @@ public class ParameterFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        if(timer!=null)
+            timer.cancel();
+        super.onDestroy();
     }
 
     public void noZero(List<Pum> pumList) {

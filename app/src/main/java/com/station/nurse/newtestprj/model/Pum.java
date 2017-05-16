@@ -1,6 +1,6 @@
 package com.station.nurse.newtestprj.model;
 
-public class Pum {
+public class Pum implements Comparable<Pum> {
 /*
     Slot:泵号；
     Type：设备类型；
@@ -20,8 +20,8 @@ public class Pum {
     private int Slot;
     private String Type;
     private String Model;
-    private String  Total;
-    private String  LinkStatus;
+    private String Total;
+    private String LinkStatus;
     private String Sum;
     private String Drug;
     private String Speed;
@@ -172,5 +172,11 @@ public class Pum {
 
     public void setRate(String rate) {
         Rate = rate;
+    }
+
+    @Override
+    public int compareTo(Pum o) {
+
+        return Slot-o.getSlot();
     }
 }
