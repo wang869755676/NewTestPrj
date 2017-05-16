@@ -159,7 +159,15 @@ public class ParameterFragment extends Fragment {
                                 nums.add(pum.getSlot() + "号泵");
                             }
                             paramNum.attachDataSource(nums);
+                            // 处理每次刷新后，重新的状态
                             paramNum.setSelectedIndex(currentPosition);
+                            if(dataList.get(currentPosition).getStatus()!=1){
+                                paramSend.setBackgroundColor(Color.GRAY);
+                                paramSend.setEnabled(false);
+                            }else{
+                                paramSend.setBackgroundColor(Color.BLUE);
+                                paramSend.setEnabled(true);
+                            }
                         }
                     }
                 });
